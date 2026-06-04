@@ -3,27 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MYNAME · DIGITAL UNIVERSE</title>
+<title>实践论 · 星星之火 可以燎原</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   :root {
-    --neon-blue: #00d4ff;
-    --neon-purple: #b44fff;
-    --neon-green: #00ff9d;
-    --neon-pink: #ff2d78;
-    --neon-orange: #ff8c00;
-    --bg-deep: #020408;
-    --bg-card: rgba(10, 20, 40, 0.7);
-    --bg-card2: rgba(20, 5, 40, 0.7);
-    --glow-blue: 0 0 20px rgba(0,212,255,0.5), 0 0 60px rgba(0,212,255,0.2);
-    --glow-purple: 0 0 20px rgba(180,79,255,0.5), 0 0 60px rgba(180,79,255,0.2);
-    --glow-green: 0 0 20px rgba(0,255,157,0.5), 0 0 60px rgba(0,255,157,0.2);
-    --font-display: 'Orbitron', monospace;
+    --spark-red: #d32f2f;
+    --spark-gold: #fbc02d;
+    --spark-orange: #f57c00;
+    --bg-dark: #0a0505;
+    --bg-paper: #f5f2eb;
+    --card-dark: rgba(35, 15, 15, 0.8);
+    --glow-red: 0 0 20px rgba(211, 47, 47, 0.6), 0 0 40px rgba(211, 47, 47, 0.3);
+    --glow-gold: 0 0 20px rgba(251, 192, 45, 0.5);
+    --font-title: 'Ma Shan Zheng', 'Long Cang', cursive;
+    --font-serif: 'Noto Serif SC', serif;
     --font-mono: 'Share Tech Mono', monospace;
-    --font-body: 'Rajdhani', sans-serif;
-    --active-color: #00d4ff;
+    --active-color: #fbc02d;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,29 +28,30 @@
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--bg-deep);
-    color: #e0f0ff;
-    font-family: var(--font-body);
+    background: var(--bg-dark);
+    color: #f5f2eb;
+    font-family: var(--font-serif);
     overflow-x: hidden;
     cursor: none;
   }
 
-  /* ── CUSTOM CURSOR ── */
+  /* ── CUSTOM CURSOR (SPARK EFFECT) ── */
   #cursor {
-    position: fixed; top: 0; left: 0; width: 12px; height: 12px;
-    background: var(--neon-blue); border-radius: 50%; pointer-events: none;
+    position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+    background: var(--spark-gold); border-radius: 50%; pointer-events: none;
     z-index: 9999; transform: translate(-50%,-50%);
-    box-shadow: var(--glow-blue); transition: transform 0.1s, background 0.3s;
-    mix-blend-mode: screen;
+    box-shadow: var(--glow-gold); transition: transform 0.1s;
   }
   #cursor-ring {
-    position: fixed; top: 0; left: 0; width: 36px; height: 36px;
-    border: 1.5px solid rgba(0,212,255,0.6); border-radius: 50%; pointer-events: none;
+    position: fixed; top: 0; left: 0; width: 32px; height: 32px;
+    border: 2px dashed var(--spark-red); border-radius: 50%; pointer-events: none;
     z-index: 9998; transform: translate(-50%,-50%);
-    transition: transform 0.15s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
+    transition: transform 0.15s ease-out;
+    animation: spin 6s linear infinite;
   }
-  body.cursor-hover #cursor { transform: translate(-50%,-50%) scale(2.5); }
-  body.cursor-hover #cursor-ring { width: 60px; height: 60px; border-color: var(--active-color); }
+  @keyframes spin { from{transform:translate(-50%,-50%) rotate(0deg)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+  body.cursor-hover #cursor { transform: translate(-50%,-50%) scale(2); background: var(--spark-red); box-shadow: var(--glow-red); }
+  body.cursor-hover #cursor-ring { border-color: var(--spark-gold); transform: translate(-50%,-50%) scale(1.5); }
 
   /* ── CANVAS BACKGROUND ── */
   #bg-canvas {
@@ -63,511 +61,199 @@
 
   /* ── SCROLL PROGRESS ── */
   #scroll-bar {
-    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
-    z-index: 9999; transition: width 0.1s;
-    box-shadow: 0 0 8px var(--neon-blue);
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--spark-red), var(--spark-orange), var(--spark-gold));
+    z-index: 9999; box-shadow: 0 0 10px var(--spark-red);
   }
 
   /* ── NAVIGATION ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    padding: 16px 40px; display: flex; align-items: center; justify-content: space-between;
-    background: rgba(2,4,8,0.6); backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0,212,255,0.1);
-    transition: all 0.3s;
+    padding: 20px 40px; display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10, 5, 5, 0.85); backdrop-filter: blur(15px);
+    border-bottom: 2px solid rgba(251, 192, 45, 0.2);
   }
-  nav.scrolled { background: rgba(2,4,8,0.9); }
   .nav-logo {
-    font-family: var(--font-display); font-size: 1.1rem; font-weight: 900;
-    color: var(--neon-blue); text-shadow: var(--glow-blue); letter-spacing: 4px;
-    text-decoration: none;
+    font-family: var(--font-title); font-size: 2rem;
+    color: var(--spark-gold); text-shadow: var(--glow-gold);
+    text-decoration: none; letter-spacing: 2px;
   }
-  .nav-logo span { color: var(--neon-purple); }
-  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-logo span { color: var(--spark-red); text-shadow: var(--glow-red); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
   .nav-links a {
-    font-family: var(--font-mono); font-size: 0.8rem; color: rgba(224,240,255,0.7);
-    text-decoration: none; letter-spacing: 2px; position: relative;
-    transition: color 0.3s; text-transform: uppercase;
+    font-size: 1rem; font-weight: 700; color: rgba(245,242,235,0.7);
+    text-decoration: none; letter-spacing: 1px; position: relative;
+    transition: color 0.3s;
   }
   .nav-links a::after {
-    content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px;
-    background: var(--neon-blue); transition: width 0.3s; box-shadow: var(--glow-blue);
+    content: '★'; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%) scale(0);
+    color: var(--spark-gold); transition: transform 0.3s; font-size: 0.6rem;
   }
-  .nav-links a:hover { color: var(--neon-blue); }
-  .nav-links a:hover::after { width: 100%; }
-  .nav-status {
-    font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-green);
-    display: flex; align-items: center; gap: 8px;
-  }
-  .status-dot {
-    width: 8px; height: 8px; background: var(--neon-green); border-radius: 50%;
-    animation: pulse-dot 2s infinite; box-shadow: 0 0 8px var(--neon-green);
-  }
-  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+  .nav-links a:hover { color: var(--spark-gold); }
+  .nav-links a:hover::after { transform: translateX(-50%) scale(1); }
 
-  /* ── HAMBURGER ── */
   .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-  .hamburger span { display: block; width: 24px; height: 2px; background: var(--neon-blue); transition: all 0.3s; }
-
-  /* ── SECTIONS WRAPPER ── */
-  main { position: relative; z-index: 1; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--spark-gold); transition: all 0.3s; }
 
   /* ── HERO SECTION ── */
   #hero {
     height: 100vh; display: flex; flex-direction: column;
     align-items: center; justify-content: center; position: relative; overflow: hidden;
-    padding: 80px 40px 40px;
+    padding: 0 20px; text-align: center;
   }
-  .hero-grid-overlay {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+  .hero-bg-accent {
+    position: absolute; font-size: 45vh; font-family: var(--font-title);
+    color: rgba(211, 47, 47, 0.05); z-index: 1; user-select: none; pointer-events: none;
+    animation: pulse-star 4s ease-in-out infinite;
   }
-  .hero-scan-line {
-    position: absolute; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
-    opacity: 0.4; animation: scan 4s linear infinite;
-  }
-  @keyframes scan { from{top:-2px} to{top:100%} }
+  @keyframes pulse-star { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.05);opacity:0.8} }
 
-  .hero-content { text-align: center; position: relative; z-index: 2; }
-  .hero-tag {
-    font-family: var(--font-mono); font-size: 0.75rem; color: var(--neon-green);
-    letter-spacing: 6px; text-transform: uppercase; margin-bottom: 24px;
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-  }
-  .hero-tag::before, .hero-tag::after {
-    content: ''; flex: 1; max-width: 60px; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--neon-green));
-  }
-  .hero-tag::after { background: linear-gradient(270deg, transparent, var(--neon-green)); }
-
-  .hero-name {
-    font-family: var(--font-display); font-size: clamp(3rem, 10vw, 8rem);
-    font-weight: 900; line-height: 1; margin-bottom: 8px;
-    background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 40%, var(--neon-purple) 70%, var(--neon-pink) 100%);
+  .hero-content { position: relative; z-index: 2; max-width: 900px; }
+  .hero-star { color: var(--spark-gold); font-size: 2.5rem; text-shadow: var(--glow-gold); margin-bottom: 20px; }
+  
+  .hero-title {
+    font-family: var(--font-title); font-size: clamp(3.5rem, 10vw, 7.5rem);
+    font-weight: 900; line-height: 1.2; margin-bottom: 20px;
+    background: linear-gradient(180deg, #fff 30%, var(--spark-gold) 70%, var(--spark-red) 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    position: relative;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
   }
-  .hero-name.glitch { animation: glitch 0.3s steps(2) forwards; }
-  @keyframes glitch {
-    0%   { clip-path: inset(0 0 90% 0); transform: translate(-4px,0); }
-    20%  { clip-path: inset(30% 0 50% 0); transform: translate(4px,0); }
-    40%  { clip-path: inset(60% 0 20% 0); transform: translate(-2px,0); }
-    60%  { clip-path: inset(80% 0 5% 0); transform: translate(2px,0); }
-    80%  { clip-path: inset(10% 0 75% 0); transform: translate(-1px,0); }
-    100% { clip-path: inset(0 0 0 0); transform: translate(0,0); }
-  }
-  .hero-name-ghost {
-    position: absolute; inset: 0;
-    font-family: var(--font-display); font-size: clamp(3rem, 10vw, 8rem);
-    font-weight: 900; line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(0,212,255,0.2);
-    pointer-events: none;
-  }
-
+  
   .hero-subtitle {
-    font-family: var(--font-mono); font-size: clamp(0.8rem, 2vw, 1.1rem);
-    color: rgba(224,240,255,0.8); letter-spacing: 3px; margin: 20px 0;
-    min-height: 1.6em;
+    font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 700;
+    color: var(--spark-paper); letter-spacing: 4px; margin-bottom: 40px;
+    border-y: 1px solid rgba(245,242,235,0.2); padding: 10px 0;
+    display: inline-block;
   }
-  .hero-subtitle .cursor-blink { animation: blink 1s step-end infinite; }
-  @keyframes blink { 50%{opacity:0} }
 
-  .hero-cta {
-    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 40px;
+  .hero-quote {
+    font-size: 1.1rem; font-style: italic; color: rgba(245,242,235,0.6);
+    max-width: 600px; margin: 0 auto 40px; line-height: 1.8;
   }
+
   .btn {
-    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 3px;
-    text-transform: uppercase; padding: 14px 32px; text-decoration: none;
-    position: relative; overflow: hidden; transition: all 0.3s; cursor: pointer; border: none;
+    font-size: 1rem; font-weight: 700; letter-spacing: 2px;
+    padding: 14px 36px; text-decoration: none; display: inline-block;
+    position: relative; transition: all 0.3s; cursor: pointer; border: none;
+    background: transparent; border: 2px solid var(--spark-gold); color: var(--spark-gold);
+    box-shadow: inset 0 0 10px rgba(251,192,45,0.1);
   }
-  .btn-primary {
-    background: transparent;
-    border: 1px solid var(--neon-blue);
-    color: var(--neon-blue);
-    box-shadow: var(--glow-blue), inset 0 0 20px rgba(0,212,255,0.05);
+  .btn:hover {
+    background: var(--spark-gold); color: var(--bg-dark);
+    box-shadow: var(--glow-gold); transform: translateY(-3px);
   }
-  .btn-primary::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(0,212,255,0.15), transparent);
-    transform: translateX(-100%); transition: transform 0.4s;
-  }
-  .btn-primary:hover { box-shadow: var(--glow-blue), inset 0 0 40px rgba(0,212,255,0.15); }
-  .btn-primary:hover::before { transform: translateX(0); }
-  .btn-secondary {
-    background: transparent; border: 1px solid var(--neon-purple);
-    color: var(--neon-purple);
-    box-shadow: var(--glow-purple), inset 0 0 20px rgba(180,79,255,0.05);
-  }
-  .btn-secondary::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(180,79,255,0.15), transparent);
-    transform: translateX(-100%); transition: transform 0.4s;
-  }
-  .btn-secondary:hover::before { transform: translateX(0); }
 
-  .hero-scroll-hint {
-    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    font-family: var(--font-mono); font-size: 0.65rem; color: rgba(224,240,255,0.3);
-    letter-spacing: 3px; animation: float-hint 3s ease-in-out infinite;
-  }
-  @keyframes float-hint { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
-  .scroll-arrow { width: 20px; height: 30px; border: 1px solid rgba(0,212,255,0.3); border-radius: 10px; position: relative; }
-  .scroll-arrow::after {
-    content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
-    width: 4px; height: 8px; background: var(--neon-blue); border-radius: 2px;
-    animation: scroll-dot 2s ease-in-out infinite;
-  }
-  @keyframes scroll-dot { 0%{top:6px;opacity:1} 100%{top:16px;opacity:0} }
-
-  .hero-corner {
-    position: absolute; width: 40px; height: 40px;
-    border-color: rgba(0,212,255,0.4); border-style: solid;
-  }
-  .corner-tl { top: 80px; left: 24px; border-width: 2px 0 0 2px; }
-  .corner-tr { top: 80px; right: 24px; border-width: 2px 2px 0 0; }
-  .corner-bl { bottom: 24px; left: 24px; border-width: 0 0 2px 2px; }
-  .corner-br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
-
-  /* ── SECTION COMMONS ── */
-  section { padding: 100px 40px; position: relative; }
-  .section-header { text-align: center; margin-bottom: 72px; }
-  .section-label {
-    font-family: var(--font-mono); font-size: 0.7rem; color: var(--neon-green);
-    letter-spacing: 6px; text-transform: uppercase; margin-bottom: 16px;
-    display: flex; align-items: center; justify-content: center; gap: 16px;
-  }
-  .section-label::before, .section-label::after {
-    content: ''; flex: 1; max-width: 80px; height: 1px; background: currentColor; opacity: 0.4;
+  /* ── SECTION GENERAL ── */
+  section { padding: 120px 40px; position: relative; z-index: 2; }
+  .section-header { text-align: center; margin-bottom: 80px; }
+  .section-badge {
+    color: var(--spark-red); font-size: 1.5rem; margin-bottom: 10px; display: block;
+    text-shadow: var(--glow-red);
   }
   .section-title {
-    font-family: var(--font-display); font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 700;
-    background: linear-gradient(135deg, #fff, rgba(224,240,255,0.6));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    font-family: var(--font-title); font-size: clamp(2.2rem, 5vw, 4rem);
+    color: var(--spark-gold); letter-spacing: 2px;
   }
 
-  /* ── ABOUT / DASHBOARD ── */
-  #about { background: linear-gradient(180deg, transparent 0%, rgba(0,20,60,0.2) 50%, transparent 100%); }
-
-  .about-grid {
+  /* ── ABOUT / CORE THEORY ── */
+  .theory-grid {
     max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 50px;
   }
-  .about-bio-card {
-    background: var(--bg-card); border: 1px solid rgba(0,212,255,0.15);
-    padding: 40px; border-radius: 2px; position: relative;
-    backdrop-filter: blur(20px); transition: border-color 0.3s, box-shadow 0.3s;
+  .intro-card {
+    background: var(--card-dark); border: 2px solid rgba(211, 47, 47, 0.3);
+    padding: 45px; position: relative; backdrop-filter: blur(20px);
+    border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   }
-  .about-bio-card:hover { border-color: rgba(0,212,255,0.4); box-shadow: var(--glow-blue); }
-  .about-bio-card::before {
-    content: 'PROFILE.SYS'; position: absolute; top: -10px; left: 20px;
-    font-family: var(--font-mono); font-size: 0.65rem; color: var(--neon-blue);
-    background: var(--bg-deep); padding: 0 8px; letter-spacing: 2px;
+  .intro-card::before {
+    content: '★ 核心释义'; position: absolute; top: -15px; left: 30px;
+    background: var(--spark-red); color: #fff; padding: 4px 15px;
+    font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;
   }
-  .bio-avatar {
-    width: 100px; height: 100px; margin: 0 auto 24px;
-    border-radius: 50%; position: relative;
-    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--bg-deep);
-    box-shadow: var(--glow-blue);
+  .intro-title { font-size: 1.8rem; color: var(--spark-gold); margin-bottom: 20px; border-bottom: 1px dashed rgba(251,192,45,0.3); padding-bottom: 10px; }
+  .intro-text { font-size: 1.1rem; line-height: 2; color: rgba(245,242,235,0.8); text-align: justify; }
+
+  .panel-nodes { display: flex; flex-direction: column; gap: 24px; }
+  .theory-node {
+    background: rgba(30,30,30,0.4); border-left: 4px solid var(--spark-red);
+    padding: 24px; transition: all 0.3s; cursor: pointer;
   }
-  .bio-avatar::after {
-    content: ''; position: absolute; inset: -4px;
-    border-radius: 50%; border: 1px solid rgba(0,212,255,0.3);
-    animation: spin-ring 8s linear infinite;
+  .theory-node:hover, .theory-node.active {
+    background: rgba(211, 47, 47, 0.1); border-left-color: var(--spark-gold);
+    transform: translateX(100px) scale(1.02);
+    transform: translateX(10px);
   }
-  @keyframes spin-ring { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-  .bio-avatar-notch {
-    position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
-    width: 12px; height: 12px; background: var(--bg-deep); border-radius: 50%;
-    border: 2px solid var(--neon-blue);
+  .node-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .node-title { font-size: 1.3rem; color: var(--spark-gold); font-weight: 700; }
+  .node-tag { font-size: 0.8rem; color: #fff; background: var(--spark-red); padding: 2px 8px; font-weight: 700; }
+  .node-desc { font-size: 0.95rem; line-height: 1.6; color: rgba(245,242,235,0.6); }
+
+  /* ── BLOCKS / THE MATRIX ── */
+  .matrix-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 30px;
+  }
+  .matrix-card {
+    background: var(--card-dark); border: 1px solid rgba(251,192,45,0.2);
+    padding: 30px; position: relative; overflow: hidden; transition: all 0.3s;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .matrix-card:hover {
+    border-color: var(--spark-gold); box-shadow: var(--glow-gold);
+    transform: translateY(-5px);
+  }
+  .matrix-icon { font-size: 2rem; color: var(--spark-red); margin-bottom: 20px; }
+  .matrix-heading { font-size: 1.4rem; color: #fff; margin-bottom: 15px; font-family: var(--font-serif); }
+  .matrix-body { font-size: 0.95rem; line-height: 1.8; color: rgba(245,242,235,0.7); text-align: justify; margin-bottom: 20px; }
+  .matrix-badge {
+    font-family: var(--font-mono); font-size: 0.75rem; color: var(--spark-gold);
+    border-top: 1px solid rgba(245,242,235,0.1); padding-top: 10px; display: block;
   }
 
-  .bio-name {
-    font-family: var(--font-display); font-size: 1.4rem; text-align: center;
-    color: #fff; margin-bottom: 4px;
-  }
-  .bio-role {
-    font-family: var(--font-mono); font-size: 0.8rem; text-align: center;
-    color: var(--neon-blue); letter-spacing: 3px; margin-bottom: 24px;
-  }
-  .bio-text {
-    font-size: 0.95rem; line-height: 1.8; color: rgba(224,240,255,0.7);
-    border-top: 1px solid rgba(0,212,255,0.1); padding-top: 20px;
-  }
-  .bio-stats {
-    display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 24px;
-  }
-  .bio-stat {
-    text-align: center; padding: 12px; border: 1px solid rgba(0,212,255,0.1);
-    background: rgba(0,212,255,0.03); transition: all 0.3s;
-  }
-  .bio-stat:hover { border-color: var(--neon-blue); background: rgba(0,212,255,0.08); }
-  .bio-stat-num {
-    font-family: var(--font-display); font-size: 1.5rem; color: var(--neon-blue); font-weight: 700;
-  }
-  .bio-stat-label { font-family: var(--font-mono); font-size: 0.6rem; color: rgba(224,240,255,0.4); letter-spacing: 2px; }
-
-  .skills-panel { display: flex; flex-direction: column; gap: 24px; }
-  .skill-category {
-    background: var(--bg-card2); border: 1px solid rgba(180,79,255,0.15);
-    padding: 24px; border-radius: 2px; position: relative;
-    backdrop-filter: blur(20px); transition: all 0.3s; cursor: pointer;
-  }
-  .skill-category:hover { border-color: rgba(180,79,255,0.4); box-shadow: var(--glow-purple); }
-  .skill-category.active { border-color: var(--active-color); }
-  .skill-cat-header {
-    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-  }
-  .skill-cat-icon { font-size: 1.2rem; width: 36px; text-align: center; }
-  .skill-cat-title {
-    font-family: var(--font-mono); font-size: 0.85rem; letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .skill-cat-count {
-    margin-left: auto; font-family: var(--font-mono); font-size: 0.7rem;
-    color: var(--neon-green); background: rgba(0,255,157,0.1);
-    padding: 2px 8px; border: 1px solid rgba(0,255,157,0.3);
-  }
-  .skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-  .skill-tag {
-    font-family: var(--font-mono); font-size: 0.7rem; padding: 5px 12px;
-    border: 1px solid; border-radius: 1px; letter-spacing: 1px;
-    transition: all 0.3s; cursor: pointer;
-  }
-  .skill-tag.blue { border-color: rgba(0,212,255,0.3); color: var(--neon-blue); background: rgba(0,212,255,0.05); }
-  .skill-tag.purple { border-color: rgba(180,79,255,0.3); color: var(--neon-purple); background: rgba(180,79,255,0.05); }
-  .skill-tag.green { border-color: rgba(0,255,157,0.3); color: var(--neon-green); background: rgba(0,255,157,0.05); }
-  .skill-tag.pink { border-color: rgba(255,45,120,0.3); color: var(--neon-pink); background: rgba(255,45,120,0.05); }
-  .skill-tag:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-  .skill-tag.blue:hover { background: rgba(0,212,255,0.15); box-shadow: 0 0 12px rgba(0,212,255,0.3); }
-  .skill-tag.purple:hover { background: rgba(180,79,255,0.15); box-shadow: 0 0 12px rgba(180,79,255,0.3); }
-  .skill-tag.green:hover { background: rgba(0,255,157,0.15); box-shadow: 0 0 12px rgba(0,255,157,0.3); }
-  .skill-tag.pink:hover { background: rgba(255,45,120,0.15); box-shadow: 0 0 12px rgba(255,45,120,0.3); }
-
-  /* ── PROJECTS ── */
-  #projects { background: linear-gradient(180deg, transparent, rgba(30,0,60,0.2), transparent); }
-
-  .projects-container { max-width: 1200px; margin: 0 auto; }
-  .projects-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 28px;
+  /* ── LABORATORY (SPARK INTERACTION) ── */
+  .lab-wrapper { max-width: 900px; margin: 0 auto; text-align: center; }
+  .lab-hint { font-size: 1rem; color: rgba(245,242,235,0.5); margin-bottom: 25px; }
+  #spark-canvas {
+    width: 100%; height: 400px; display: block;
+    background: #050202; border: 2px solid var(--spark-red);
+    box-shadow: inset 0 0 30px rgba(211,47,47,0.2); cursor: crosshair;
   }
 
-  .project-card {
-    background: var(--bg-card); border: 1px solid rgba(0,212,255,0.1);
-    border-radius: 2px; overflow: hidden; position: relative;
-    transition: transform 0.1s, box-shadow 0.3s, border-color 0.3s;
-    cursor: pointer; will-change: transform;
-    transform-style: preserve-3d;
+  /* ── CONTACT / FINAL FOOTER ── */
+  #final-zone {
+    text-align: center; background: linear-gradient(180deg, transparent, #120505);
+    padding: 100px 40px;
   }
-  .project-card:hover { border-color: rgba(0,212,255,0.4); }
-  .card-glow {
-    position: absolute; inset: 0; border-radius: 2px; pointer-events: none;
-    opacity: 0; transition: opacity 0.3s;
-    background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(0,212,255,0.12) 0%, transparent 60%);
-  }
-  .project-card:hover .card-glow { opacity: 1; }
+  .final-title { font-family: var(--font-title); font-size: 3rem; color: var(--spark-gold); margin-bottom: 20px; }
+  .final-text { font-size: 1.2rem; line-height: 1.8; max-width: 700px; margin: 0 auto 40px; color: rgba(245,242,235,0.7); }
+  
+  .footer-divider { border: none; border-top: 1px solid rgba(251,192,45,0.2); margin: 60px 0 30px; }
+  .footer-text { font-family: var(--font-mono); font-size: 0.8rem; color: rgba(245,242,235,0.3); letter-spacing: 2px; }
 
-  .card-banner {
-    height: 180px; position: relative; overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .card-banner-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .card-banner-icon {
-    font-size: 3rem; position: relative; z-index: 1;
-    filter: drop-shadow(0 0 20px currentColor);
-    animation: float-icon 3s ease-in-out infinite;
-  }
-  @keyframes float-icon { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-  .card-tag {
-    position: absolute; top: 12px; right: 12px; z-index: 2;
-    font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 2px;
-    padding: 4px 10px; border: 1px solid; text-transform: uppercase;
-  }
-  .card-tag.featured { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(255,45,120,0.1); }
-  .card-tag.open { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0,255,157,0.1); }
-  .card-tag.beta { border-color: var(--neon-orange); color: var(--neon-orange); background: rgba(255,140,0,0.1); }
-
-  .card-body { padding: 24px; }
-  .card-title {
-    font-family: var(--font-display); font-size: 1rem; font-weight: 700;
-    color: #fff; margin-bottom: 8px; letter-spacing: 1px;
-  }
-  .card-desc { font-size: 0.9rem; color: rgba(224,240,255,0.6); line-height: 1.6; margin-bottom: 16px; }
-  .card-tech { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-  .card-tech-item {
-    font-family: var(--font-mono); font-size: 0.65rem; padding: 3px 8px;
-    background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
-    color: var(--neon-blue); letter-spacing: 1px;
-  }
-  .card-links { display: flex; gap: 12px; }
-  .card-link {
-    font-family: var(--font-mono); font-size: 0.7rem; color: rgba(224,240,255,0.5);
-    text-decoration: none; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;
-    transition: color 0.3s;
-  }
-  .card-link:hover { color: var(--neon-blue); }
-  .card-progress {
-    position: absolute; bottom: 0; left: 0; height: 2px;
-    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
-    box-shadow: 0 0 8px var(--neon-blue);
-    transition: width 0.3s;
-  }
-
-  /* ── GRAVITY BALL / EGG ── */
-  #egg {
-    padding: 80px 40px;
-    background: linear-gradient(180deg, transparent, rgba(0,10,30,0.4), transparent);
-  }
-  .egg-wrapper {
-    max-width: 800px; margin: 0 auto; text-align: center;
-  }
-  .egg-label {
-    font-family: var(--font-mono); font-size: 0.7rem; color: rgba(224,240,255,0.3);
-    letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px;
-  }
-  .egg-title {
-    font-family: var(--font-display); font-size: 1.4rem; color: var(--neon-purple);
-    margin-bottom: 8px; text-shadow: var(--glow-purple);
-  }
-  .egg-hint {
-    font-size: 0.85rem; color: rgba(224,240,255,0.4); margin-bottom: 32px;
-    font-family: var(--font-mono);
-  }
-  #gravity-canvas {
-    width: 100%; height: 360px; display: block;
-    border: 1px solid rgba(180,79,255,0.2);
-    background: rgba(10,0,30,0.5); border-radius: 2px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 40px rgba(180,79,255,0.1);
-    cursor: crosshair;
-  }
-
-  /* ── CONTACT ── */
-  #contact {
-    padding: 100px 40px; text-align: center;
-    background: linear-gradient(180deg, transparent, rgba(0,20,60,0.3));
-  }
-  .contact-inner { max-width: 700px; margin: 0 auto; }
-  .contact-subtitle {
-    font-family: var(--font-body); font-size: 1.1rem; color: rgba(224,240,255,0.5);
-    margin: 20px auto 48px; line-height: 1.8; max-width: 500px;
-  }
-  .contact-links {
-    display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-bottom: 60px;
-  }
-  .contact-link {
-    display: flex; align-items: center; gap: 12px;
-    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 2px;
-    color: rgba(224,240,255,0.6); text-decoration: none;
-    border: 1px solid rgba(255,255,255,0.1); padding: 14px 24px;
-    transition: all 0.3s; position: relative; overflow: hidden;
-  }
-  .contact-link::before {
-    content: ''; position: absolute; inset: 0;
-    background: var(--link-color, var(--neon-blue)); opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .contact-link:hover { color: #fff; border-color: var(--link-color, var(--neon-blue)); }
-  .contact-link:hover::before { opacity: 0.1; }
-  .contact-link i { font-size: 1rem; position: relative; z-index: 1; }
-  .contact-link span { position: relative; z-index: 1; }
-
-  .footer-divider {
-    border: none; border-top: 1px solid rgba(0,212,255,0.1); margin: 40px 0 24px;
-  }
-  .footer-text {
-    font-family: var(--font-mono); font-size: 0.7rem; color: rgba(224,240,255,0.2);
-    letter-spacing: 3px; text-transform: uppercase;
-  }
-
-  /* ── REVEAL ANIMATIONS ── */
-  .reveal {
-    opacity: 0; transform: translateY(40px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
+  /* ── REVEAL SYSTEM ── */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  /* ── COLOR SHIFT OVERLAY ── */
-  #color-overlay {
-    position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    opacity: 0; transition: opacity 0.5s;
-    mix-blend-mode: overlay;
-  }
-
-  /* ── MOBILE NAV ── */
-  .mobile-nav-overlay {
-    position: fixed; inset: 0; z-index: 990;
-    background: rgba(2,4,8,0.97); backdrop-filter: blur(20px);
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px;
-    transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
-  }
-  .mobile-nav-overlay.open { transform: translateX(0); }
-  .mobile-nav-overlay a {
-    font-family: var(--font-display); font-size: 1.5rem; color: rgba(224,240,255,0.7);
-    text-decoration: none; letter-spacing: 6px; transition: color 0.3s;
-  }
-  .mobile-nav-overlay a:hover { color: var(--neon-blue); }
-
-  /* ── LOADING SCREEN ── */
-  #loader {
-    position: fixed; inset: 0; z-index: 10000;
-    background: var(--bg-deep); display: flex;
-    flex-direction: column; align-items: center; justify-content: center; gap: 24px;
-    transition: opacity 0.6s, transform 0.6s;
-  }
-  #loader.done { opacity: 0; pointer-events: none; transform: scale(1.05); }
-  .loader-logo {
-    font-family: var(--font-display); font-size: 2rem; font-weight: 900;
-    color: var(--neon-blue); letter-spacing: 8px; text-shadow: var(--glow-blue);
-  }
-  .loader-bar-wrap {
-    width: 280px; height: 2px; background: rgba(0,212,255,0.1); position: relative;
-  }
-  .loader-bar {
-    height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
-    width: 0%; transition: width 0.05s linear; box-shadow: var(--glow-blue);
-  }
-  .loader-text {
-    font-family: var(--font-mono); font-size: 0.7rem; color: rgba(0,212,255,0.6);
-    letter-spacing: 4px; min-height: 1em;
-  }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
-    .about-grid { grid-template-columns: 1fr; }
-    nav { padding: 16px 20px; }
+    .theory-grid { grid-template-columns: 1fr; }
+    nav { padding: 15px 20px; }
     .nav-links { display: none; }
-    .nav-status { display: none; }
     .hamburger { display: flex; }
-    section { padding: 80px 20px; }
-    #hero { padding: 80px 20px 40px; }
-    .projects-grid { grid-template-columns: 1fr; }
     #cursor, #cursor-ring { display: none; }
-  }
-  @media (max-width: 480px) {
-    .hero-cta { flex-direction: column; align-items: center; }
-    .btn { width: 100%; text-align: center; }
-    .bio-stats { grid-template-columns: repeat(3,1fr); }
+    body { cursor: default; }
   }
 </style>
 </head>
 <body>
 
 <!-- LOADER -->
-<div id="loader">
-  <div class="loader-logo">INIT</div>
-  <div class="loader-bar-wrap"><div class="loader-bar" id="loader-bar"></div></div>
-  <div class="loader-text" id="loader-text">LOADING UNIVERSE...</div>
+<div id="loader" style="position:fixed; inset:0; z-index:10000; background:var(--bg-dark); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition: opacity 0.5s;">
+  <div style="font-family:var(--font-title); font-size:3rem; color:var(--spark-gold); text-shadow:var(--glow-gold);">星火</div>
+  <div style="width:200px; height:2px; background:rgba(251,192,45,0.2); position:relative;">
+    <div id="loader-bar" style="height:100%; background:var(--spark-red); width:0%; transition: width 0.1s;"></div>
+  </div>
+  <div style="font-size:0.8rem; color:rgba(245,242,235,0.5); letter-spacing:2px;">正在汇聚火种...</div>
 </div>
 
 <!-- CURSOR -->
@@ -577,837 +263,370 @@
 <!-- SCROLL PROGRESS -->
 <div id="scroll-bar"></div>
 
-<!-- COLOR OVERLAY -->
-<div id="color-overlay"></div>
-
 <!-- BACKGROUND CANVAS -->
 <canvas id="bg-canvas"></canvas>
 
 <!-- NAV -->
-<nav id="nav">
-  <a href="#hero" class="nav-logo">MY<span>NAME</span></a>
+<nav>
+  <a href="#hero" class="nav-logo">实践<span>论</span></a>
   <ul class="nav-links">
-    <li><a href="#about">关于</a></li>
-    <li><a href="#projects">项目</a></li>
-    <li><a href="#egg">探索</a></li>
-    <li><a href="#contact">联系</a></li>
+    <li><a href="#theory">核心理路</a></li>
+    <li><a href="#matrix">思想矩阵</a></li>
+    <li><a href="#lab">燎原星火</a></li>
   </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    <span>ONLINE</span>
-  </div>
-  <div class="hamburger" id="hamburger">
+  <div class="hamburger" id="hamburger" onclick="toggleMobileNav()">
     <span></span><span></span><span></span>
   </div>
 </nav>
 
-<!-- MOBILE NAV -->
-<div class="mobile-nav-overlay" id="mobile-nav">
-  <a href="#about" onclick="closeMobileNav()">关于</a>
-  <a href="#projects" onclick="closeMobileNav()">项目</a>
-  <a href="#egg" onclick="closeMobileNav()">探索</a>
-  <a href="#contact" onclick="closeMobileNav()">联系</a>
-</div>
-
+<!-- MAIN CONTENT -->
 <main>
   <!-- HERO -->
   <section id="hero">
-    <div class="hero-grid-overlay"></div>
-    <div class="hero-scan-line"></div>
-    <div class="hero-corner corner-tl"></div>
-    <div class="hero-corner corner-tr"></div>
-    <div class="hero-corner corner-bl"></div>
-    <div class="hero-corner corner-br"></div>
+    <div class="hero-bg-accent">★</div>
     <div class="hero-content reveal">
-      <div class="hero-tag">DIGITAL CREATOR · ENGINEER · EXPLORER</div>
-      <div style="position:relative;display:inline-block;">
-        <h1 class="hero-name" id="hero-name">MYNAME</h1>
-        <div class="hero-name-ghost">MYNAME</div>
+      <div class="hero-star">★ ★ ★ ★ ★</div>
+      <h1 class="hero-title">星星之火 可以燎原</h1>
+      <p class="hero-subtitle">毛泽东《实践论》当代研读与视觉阐释</p>
+      <p class="hero-quote">“辩证唯物论的认识论把实践提到第一位，认为人的认识一点也离不开实践，排斥一切否认实践重要性、使认识离开实践的错误理论。”</p>
+      <div>
+        <a href="#theory" class="btn">进入思想宇宙</a>
       </div>
-      <p class="hero-subtitle"><span id="typewriter"></span><span class="cursor-blink">_</span></p>
-      <div class="hero-cta">
-        <a href="#projects" class="btn btn-primary">
-          <i class="fa fa-rocket" style="margin-right:8px"></i>探索项目
-        </a>
-        <a href="#contact" class="btn btn-secondary">
-          <i class="fa fa-satellite-dish" style="margin-right:8px"></i>建立连接
-        </a>
-      </div>
-    </div>
-    <div class="hero-scroll-hint">
-      <div class="scroll-arrow"></div>
-      <span>SCROLL</span>
     </div>
   </section>
 
-  <!-- ABOUT -->
-  <section id="about">
+  <!-- THEORY / ABOUT -->
+  <section id="theory">
     <div class="section-header reveal">
-      <div class="section-label">SYSTEM.PROFILE</div>
-      <h2 class="section-title">关于我的数字宇宙</h2>
+      <span class="section-badge">THEORY</span>
+      <h2 class="section-title">认识与实践的辩证循环</h2>
     </div>
-    <div class="about-grid">
-      <div class="about-bio-card reveal">
-        <div class="bio-avatar">
-          <div class="bio-avatar-notch"></div>
-          <span>MN</span>
-        </div>
-        <div class="bio-name">MYNAME</div>
-        <div class="bio-role">FULL-STACK DEVELOPER · DIGITAL ARTIST</div>
-        <div class="bio-text">
-          构建于代码与创意的交汇处。热爱将复杂的技术概念转化为优雅、流畅的用户体验。在虚拟空间中，每一行代码都是一道光的痕迹，每一个交互都是与用户之间的量子纠缠。
-        </div>
-        <div class="bio-stats">
-          <div class="bio-stat">
-            <div class="bio-stat-num" data-count="5">0</div>
-            <div class="bio-stat-label">YEARS EXP</div>
-          </div>
-          <div class="bio-stat">
-            <div class="bio-stat-num" data-count="42">0</div>
-            <div class="bio-stat-label">PROJECTS</div>
-          </div>
-          <div class="bio-stat">
-            <div class="bio-stat-num" data-count="128">0</div>
-            <div class="bio-stat-label">COMMITS/MO</div>
-          </div>
-        </div>
+    <div class="theory-grid">
+      <div class="intro-card reveal">
+        <h3 class="intro-title">实践是认识的基石</h3>
+        <p class="intro-text">
+          《实践论》写于1937年7月，是毛泽东借用马克思主义认识论对中国革命经验做出的哲学总结。它系统地阐明了人类认识的发展规律：从实践中产生感性认识，再由感性认识飞跃到理性认识，最终理性认识必须回归实践去检验与改造世界。
+        </p>
       </div>
-      <div class="skills-panel reveal">
-        <div class="skill-category" data-color="blue" onclick="activateSkill(this,'blue')">
-          <div class="skill-cat-header">
-            <span class="skill-cat-icon" style="color:var(--neon-blue)">⬡</span>
-            <span class="skill-cat-title" style="color:var(--neon-blue)">前端领域</span>
-            <span class="skill-cat-count">7</span>
+      <div class="panel-nodes reveal">
+        <div class="theory-node active" onclick="changeSparkColor('#d32f2f')">
+          <div class="node-header">
+            <span class="node-title">一、源于实践（感性阶段）</span>
+            <span class="node-tag">第一飞跃</span>
           </div>
-          <div class="skill-tags">
-            <span class="skill-tag blue">React</span>
-            <span class="skill-tag blue">Vue.js</span>
-            <span class="skill-tag blue">TypeScript</span>
-            <span class="skill-tag blue">Next.js</span>
-            <span class="skill-tag blue">WebGL</span>
-            <span class="skill-tag blue">GSAP</span>
-            <span class="skill-tag blue">CSS动效</span>
-          </div>
+          <p class="node-desc">人在实践过程中，刚开始只能看到事物的现象、片面和外部联系，这是认识的感性阶段。它是认识的起点，但还不够深刻。</p>
         </div>
-        <div class="skill-category" data-color="purple" onclick="activateSkill(this,'purple')">
-          <div class="skill-cat-header">
-            <span class="skill-cat-icon" style="color:var(--neon-purple)">◈</span>
-            <span class="skill-cat-title" style="color:var(--neon-purple)">后端架构</span>
-            <span class="skill-cat-count">6</span>
+        <div class="theory-node" onclick="changeSparkColor('#fbc02d')">
+          <div class="node-header">
+            <span class="node-title">二、成于理论（理性阶段）</span>
+            <span class="node-tag">重组深化</span>
           </div>
-          <div class="skill-tags">
-            <span class="skill-tag purple">Node.js</span>
-            <span class="skill-tag purple">Python</span>
-            <span class="skill-tag purple">Go</span>
-            <span class="skill-tag purple">GraphQL</span>
-            <span class="skill-tag purple">PostgreSQL</span>
-            <span class="skill-tag purple">Redis</span>
-          </div>
+          <p class="node-desc">随着实践经验的反复累积，通过“去粗取精、去伪存真、由此及彼、由表及里”的思考，感性认识跃升为概念、定理与理论，触及事物的本质。</p>
         </div>
-        <div class="skill-category" data-color="green" onclick="activateSkill(this,'green')">
-          <div class="skill-cat-header">
-            <span class="skill-cat-icon" style="color:var(--neon-green)">◉</span>
-            <span class="skill-cat-title" style="color:var(--neon-green)">AI / 云原生</span>
-            <span class="skill-cat-count">5</span>
+        <div class="theory-node" onclick="changeSparkColor('#f57c00')">
+          <div class="node-header">
+            <span class="node-title">三、归于改造（检验阶段）</span>
+            <span class="node-tag">第二飞跃</span>
           </div>
-          <div class="skill-tags">
-            <span class="skill-tag green">LLM Integration</span>
-            <span class="skill-tag green">Docker</span>
-            <span class="skill-tag green">Kubernetes</span>
-            <span class="skill-tag green">AWS</span>
-            <span class="skill-tag green">CI/CD</span>
-          </div>
+          <p class="node-desc">理性认识是否正确，唯一的判别标准是将其放回社会实践中去。如果能达到预想的目的，认识才算得到了证实。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PROJECTS -->
-  <section id="projects">
+  <!-- MATRIX / PROJECTS CONTAINER -->
+  <section id="matrix">
     <div class="section-header reveal">
-      <div class="section-label">PROJECTS.EXE</div>
-      <h2 class="section-title">数字构建物</h2>
+      <span class="section-badge">MATRIX</span>
+      <h2 class="section-title">核心思想矩阵</h2>
     </div>
-    <div class="projects-container">
-      <div class="projects-grid" id="projects-grid">
-        <!-- Cards injected by JS -->
+    <div class="matrix-grid">
+      <div class="matrix-card reveal">
+        <div class="matrix-icon"><i class="fa-solid align-justify fa-eye"></i></div>
+        <h3 class="matrix-heading">反对教条主义</h3>
+        <p class="matrix-body">有些教条主义者墨守成规，将马克思主义词句当作万能灵药，拒绝在变幻的具体中国革命现实中去观察、去实践。这是离开实践的空中楼阁。</p>
+        <span class="matrix-badge">SECTION .01</span>
+      </div>
+      <div class="matrix-card reveal">
+        <div class="matrix-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <h3 class="matrix-heading">反对经验主义</h3>
+        <p class="matrix-body">经验主义者只拘泥于局部的狭隘经验，把片面的感性认识误认为绝对真理，缺乏理论的高度，同样无法指导中国革命走向全局性胜利。</p>
+        <span class="matrix-badge">SECTION .02</span>
+      </div>
+      <div class="matrix-card reveal">
+        <div class="matrix-icon"><i class="fa-solid fa-infinity"></i></div>
+        <h3 class="matrix-heading">无限循环的真理</h3>
+        <p class="matrix-body">“实践、认识、再实践、再认识，这种形式，循环往复以至无穷，而实践和认识之每一循环的内容，都比较地进到了高一级的程度。”</p>
+        <span class="matrix-badge">SECTION .03</span>
       </div>
     </div>
   </section>
 
-  <!-- GRAVITY EGG -->
-  <section id="egg">
-    <div class="egg-wrapper">
-      <div class="egg-label reveal">SECRET INTERACTION</div>
-      <div class="egg-title reveal">引力场实验室</div>
-      <div class="egg-hint reveal">点击生成粒子 · 鼠标拖拽创造引力场 · 双击清空</div>
-      <canvas id="gravity-canvas" class="reveal"></canvas>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="contact-inner">
+  <!-- LAB / EGG -->
+  <section id="lab">
+    <div class="lab-wrapper">
       <div class="section-header reveal">
-        <div class="section-label">CONNECT.INIT</div>
-        <h2 class="section-title">建立量子纠缠</h2>
+        <span class="section-badge">INTERACTION</span>
+        <h2 class="section-title">物理场实验：星火激荡</h2>
       </div>
-      <p class="contact-subtitle reveal">
-        无论是合作项目、技术探讨，还是只想说声 Hello——<br>
-        我的通信频道永远开放，信号穿越星际，也能触达。
-      </p>
-      <div class="contact-links reveal">
-        <a href="mailto:hello@myname.dev" class="contact-link" style="--link-color:var(--neon-blue)">
-          <i class="fa fa-envelope"></i><span>EMAIL</span>
-        </a>
-        <a href="https://github.com/myname" class="contact-link" style="--link-color:var(--neon-purple)">
-          <i class="fab fa-github"></i><span>GITHUB</span>
-        </a>
-        <a href="#" class="contact-link" style="--link-color:var(--neon-green)">
-          <i class="fab fa-linkedin"></i><span>LINKEDIN</span>
-        </a>
-        <a href="#" class="contact-link" style="--link-color:var(--neon-pink)">
-          <i class="fab fa-twitter"></i><span>TWITTER</span>
-        </a>
-        <a href="#" class="contact-link" style="--link-color:var(--neon-orange)">
-          <i class="fab fa-weixin"></i><span>WECHAT</span>
-        </a>
-      </div>
-      <hr class="footer-divider">
-      <p class="footer-text">© 2025 MYNAME · BUILT WITH QUANTUM ENERGY &amp; BLACK COFFEE</p>
+      <p class="lab-hint reveal">点击产生零星火种 · 鼠标拖拽赋予星火引力 · 双击使群星聚变</p>
+      <canvas id="spark-canvas" class="reveal"></canvas>
     </div>
+  </section>
+
+  <!-- FOOTER SECTION -->
+  <section id="final-zone">
+    <div class="reveal">
+      <h2 class="final-title">实践是检验真理的唯一标准</h2>
+      <p class="final-text">唯有投身于变革现实的洪流之中，思想才具有生命力。星星之火，终将在无尽的探索中燃遍整片原野。</p>
+    </div>
+    <hr class="footer-divider">
+    <div class="footer-text">THE PRACTICE CONCEPT • SINGLE FILE ARCHIVE • 2026</div>
   </section>
 </main>
 
 <script>
-(function(){
-'use strict';
-
-/* ═══════════════════════════════════════════
-   LOADER
-═══════════════════════════════════════════ */
-const loaderMessages = [
-  'LOADING UNIVERSE...','CALIBRATING DARK MATTER...','INJECTING QUANTUM FLUX...',
-  'RENDERING SPACETIME FABRIC...','ESTABLISHING NEURAL LINK...','SYSTEM READY'
-];
-let loaderProgress = 0;
-const loaderBar = document.getElementById('loader-bar');
-const loaderText = document.getElementById('loader-text');
-const loader = document.getElementById('loader');
-let msgIdx = 0;
-
-function advanceLoader() {
-  loaderProgress += Math.random() * 18 + 8;
-  if (loaderProgress > 100) loaderProgress = 100;
-  loaderBar.style.width = loaderProgress + '%';
-  msgIdx = Math.min(Math.floor(loaderProgress / 20), loaderMessages.length - 1);
-  loaderText.textContent = loaderMessages[msgIdx];
-  if (loaderProgress < 100) {
-    setTimeout(advanceLoader, 120 + Math.random() * 100);
-  } else {
-    setTimeout(() => { loader.classList.add('done'); initAll(); }, 400);
-  }
-}
-setTimeout(advanceLoader, 200);
-
-/* ═══════════════════════════════════════════
-   CURSOR
-═══════════════════════════════════════════ */
-const cursor = document.getElementById('cursor');
-const cursorRing = document.getElementById('cursor-ring');
-let mx = window.innerWidth/2, my = window.innerHeight/2;
-let rx = mx, ry = my;
-
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-document.addEventListener('mouseenter', e => {
-  const t = e.target;
-  if (t.matches('a,button,.skill-tag,.project-card,.btn,.contact-link,.skill-category')) {
-    document.body.classList.add('cursor-hover');
-    const col = t.dataset.cursorColor;
-    if (col) {
-      cursor.style.background = col;
-      cursor.style.boxShadow = `0 0 20px ${col}`;
-    }
-  }
-}, true);
-document.addEventListener('mouseleave', e => {
-  const t = e.target;
-  if (t.matches('a,button,.skill-tag,.project-card,.btn,.contact-link,.skill-category')) {
-    document.body.classList.remove('cursor-hover');
-    cursor.style.background = 'var(--neon-blue)';
-    cursor.style.boxShadow = 'var(--glow-blue)';
-  }
-}, true);
-
-function animCursor() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
-  cursorRing.style.left = rx + 'px'; cursorRing.style.top = ry + 'px';
-  requestAnimationFrame(animCursor);
-}
-animCursor();
-
-/* ═══════════════════════════════════════════
-   BACKGROUND PARTICLE CANVAS
-═══════════════════════════════════════════ */
-const bgCanvas = document.getElementById('bg-canvas');
-const bgCtx = bgCanvas.getContext('2d');
-let bgW, bgH;
-let particles = [];
-let mouseX = -9999, mouseY = -9999;
-let activeHue = { r:0, g:212, b:255 }; // default blue
-
-function resizeBG() {
-  bgW = bgCanvas.width = window.innerWidth;
-  bgH = bgCanvas.height = window.innerHeight;
-}
-resizeBG();
-window.addEventListener('resize', resizeBG);
-document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-
-class Particle {
-  constructor() { this.reset(true); }
-  reset(init) {
-    this.x = Math.random() * bgW;
-    this.y = init ? Math.random() * bgH : bgH + 10;
-    this.size = Math.random() * 1.8 + 0.3;
-    this.speedX = (Math.random() - 0.5) * 0.4;
-    this.speedY = -(Math.random() * 0.5 + 0.1);
-    this.opacity = Math.random() * 0.6 + 0.1;
-    this.hue = Math.random() > 0.6 ? 'blue' : Math.random() > 0.5 ? 'purple' : 'green';
-    this.twinkle = Math.random() * Math.PI * 2;
-    this.twinkleSpeed = 0.02 + Math.random() * 0.03;
-    this.life = 1;
-  }
-  update() {
-    this.twinkle += this.twinkleSpeed;
-    const tw = Math.sin(this.twinkle) * 0.3 + 0.7;
-    // mouse repulsion
-    const dx = this.x - mouseX, dy = this.y - mouseY;
-    const dist = Math.sqrt(dx*dx+dy*dy);
-    if (dist < 120) {
-      const force = (120-dist)/120 * 0.6;
-      this.x += (dx/dist) * force;
-      this.y += (dy/dist) * force;
-    }
-    this.x += this.speedX; this.y += this.speedY;
-    this.opacity = this.opacity * tw;
-    if (this.y < -10) this.reset(false);
-  }
-  draw() {
-    let r,g,b;
-    if (this.hue === 'blue') { r=activeHue.r;g=activeHue.g;b=activeHue.b; }
-    else if (this.hue === 'purple') { r=180;g=79;b=255; }
-    else { r=0;g=255;b=157; }
-    const tw = (Math.sin(this.twinkle) * 0.3 + 0.7);
-    bgCtx.beginPath();
-    bgCtx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-    bgCtx.fillStyle = `rgba(${r},${g},${b},${this.opacity * tw})`;
-    bgCtx.fill();
-    if (this.size > 1) {
-      bgCtx.beginPath();
-      bgCtx.arc(this.x, this.y, this.size * 3, 0, Math.PI*2);
-      bgCtx.fillStyle = `rgba(${r},${g},${b},${this.opacity * tw * 0.08})`;
-      bgCtx.fill();
-    }
-  }
-}
-
-// Nebula blobs
-const nebulas = Array.from({length:5}, () => ({
-  x: Math.random()*bgW, y: Math.random()*bgH,
-  r: 200+Math.random()*300,
-  col: ['rgba(0,100,200,0.04)','rgba(100,0,200,0.04)','rgba(0,200,100,0.03)'][Math.floor(Math.random()*3)],
-  dx: (Math.random()-0.5)*0.2, dy: (Math.random()-0.5)*0.2
-}));
-
-for (let i = 0; i < 180; i++) particles.push(new Particle());
-
-function drawBG() {
-  bgCtx.clearRect(0, 0, bgW, bgH);
-  // Nebulas
-  for (const n of nebulas) {
-    n.x += n.dx; n.y += n.dy;
-    if (n.x < -n.r) n.x = bgW+n.r;
-    if (n.x > bgW+n.r) n.x = -n.r;
-    if (n.y < -n.r) n.y = bgH+n.r;
-    if (n.y > bgH+n.r) n.y = -n.r;
-    const g = bgCtx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
-    g.addColorStop(0, n.col); g.addColorStop(1,'transparent');
-    bgCtx.fillStyle = g; bgCtx.beginPath(); bgCtx.arc(n.x,n.y,n.r,0,Math.PI*2); bgCtx.fill();
-  }
-  // Connections
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i+1; j < particles.length; j++) {
-      const dx = particles[i].x-particles[j].x, dy = particles[i].y-particles[j].y;
-      const dist = Math.sqrt(dx*dx+dy*dy);
-      if (dist < 80) {
-        bgCtx.beginPath();
-        bgCtx.moveTo(particles[i].x, particles[i].y);
-        bgCtx.lineTo(particles[j].x, particles[j].y);
-        bgCtx.strokeStyle = `rgba(${activeHue.r},${activeHue.g},${activeHue.b},${(1-dist/80)*0.06})`;
-        bgCtx.lineWidth = 0.5; bgCtx.stroke();
+  /* ── LOADER SCRIPT ── */
+  window.addEventListener('DOMContentLoaded', () => {
+    const bar = document.getElementById('loader-bar');
+    const loader = document.getElementById('loader');
+    let width = 0;
+    const interval = setInterval(() => {
+      if (width >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          loader.style.opacity = '0';
+          setTimeout(() => loader.style.display = 'none', 500);
+        }, 200);
+      } else {
+        width += 5;
+        bar.style.width = width + '%';
       }
-    }
-  }
-  for (const p of particles) { p.update(); p.draw(); }
-  requestAnimationFrame(drawBG);
-}
-drawBG();
-
-/* ═══════════════════════════════════════════
-   COLOR SHIFT ON SKILL CLICK
-═══════════════════════════════════════════ */
-const colorOverlay = document.getElementById('color-overlay');
-const colorMap = {
-  blue: { r:0,g:212,b:255, bg:'rgba(0,60,120,0.15)' },
-  purple: { r:180,g:79,b:255, bg:'rgba(60,0,120,0.15)' },
-  green: { r:0,g:255,b:157, bg:'rgba(0,120,60,0.15)' },
-  pink: { r:255,g:45,b:120, bg:'rgba(120,0,60,0.15)' }
-};
-
-window.activateSkill = function(el, color) {
-  document.querySelectorAll('.skill-category').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  const col = colorMap[color] || colorMap.blue;
-  activeHue = { r:col.r, g:col.g, b:col.b };
-  colorOverlay.style.background = col.bg;
-  colorOverlay.style.opacity = '1';
-  document.documentElement.style.setProperty('--active-color', `rgb(${col.r},${col.g},${col.b})`);
-  // particles burst
-  for (let i = 0; i < 20; i++) {
-    particles[Math.floor(Math.random()*particles.length)].reset(false);
-  }
-  setTimeout(() => { colorOverlay.style.opacity = '0'; }, 1200);
-};
-
-/* ═══════════════════════════════════════════
-   TYPEWRITER
-═══════════════════════════════════════════ */
-const phrases = [
-  'Full-Stack Developer',
-  '数字宇宙的构建者',
-  'Creative Technologist',
-  '把代码写成诗',
-  'Open Source Enthusiast',
-  '探索无限可能'
-];
-let phraseIdx = 0, charIdx = 0, deleting = false;
-const typeEl = document.getElementById('typewriter');
-
-function typewrite() {
-  const phrase = phrases[phraseIdx];
-  if (!deleting) {
-    typeEl.textContent = phrase.slice(0, charIdx+1);
-    charIdx++;
-    if (charIdx === phrase.length) { deleting = true; setTimeout(typewrite, 2000); return; }
-    setTimeout(typewrite, 80 + Math.random()*40);
-  } else {
-    typeEl.textContent = phrase.slice(0, charIdx-1);
-    charIdx--;
-    if (charIdx === 0) {
-      deleting = false;
-      phraseIdx = (phraseIdx+1) % phrases.length;
-      setTimeout(typewrite, 400);
-      return;
-    }
-    setTimeout(typewrite, 40);
-  }
-}
-
-/* ═══════════════════════════════════════════
-   GLITCH EFFECT ON HERO NAME
-═══════════════════════════════════════════ */
-const heroName = document.getElementById('hero-name');
-function triggerGlitch() {
-  heroName.classList.add('glitch');
-  setTimeout(() => heroName.classList.remove('glitch'), 300);
-  setTimeout(triggerGlitch, 3000 + Math.random()*4000);
-}
-
-/* ═══════════════════════════════════════════
-   SCROLL ANIMATIONS
-═══════════════════════════════════════════ */
-const scrollBar = document.getElementById('scroll-bar');
-const navEl = document.getElementById('nav');
-
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
-  scrollBar.style.width = pct + '%';
-  navEl.classList.toggle('scrolled', window.scrollY > 50);
-});
-
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      // animate counters
-      e.target.querySelectorAll('[data-count]').forEach(counter => {
-        animateCounter(counter);
-      });
-    }
+    }, 30);
   });
-}, { threshold: 0.15 });
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-function animateCounter(el) {
-  const target = parseInt(el.dataset.count);
-  let start = 0;
-  const duration = 1500;
-  const startTime = performance.now();
-  function update(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(eased * target);
-    if (progress < 1) requestAnimationFrame(update);
-    else el.textContent = target;
-  }
-  requestAnimationFrame(update);
-}
-
-/* ═══════════════════════════════════════════
-   PROJECT CARDS
-═══════════════════════════════════════════ */
-const projectsData = [
-  {
-    title: 'NEBULA UI',
-    desc: '下一代组件库，内置量子动效引擎，支持深色模式与极致定制化主题系统。',
-    tech: ['React','TypeScript','Storybook','CSS Houdini'],
-    icon: '◈', iconColor: '#00d4ff', bannerColors: ['#001830','#003060','#00d4ff'],
-    tag: 'featured', tagLabel: 'FEATURED',
-    progress: 85,
-    links: [{ icon:'fab fa-github', label:'GitHub' },{ icon:'fa fa-external-link-alt', label:'Demo' }]
-  },
-  {
-    title: 'QUANTUM API',
-    desc: '高性能 GraphQL 网关，支持实时订阅、分布式缓存与零延迟数据流传输。',
-    tech: ['Go','GraphQL','Redis','Kubernetes'],
-    icon: '⬡', iconColor: '#b44fff', bannerColors: ['#180030','#360060','#b44fff'],
-    tag: 'open', tagLabel: 'OPEN SRC',
-    progress: 100,
-    links: [{ icon:'fab fa-github', label:'GitHub' },{ icon:'fa fa-book', label:'Docs' }]
-  },
-  {
-    title: 'NEURAL STUDIO',
-    desc: '基于 LLM 的创意协作平台，将 AI 能力无缝嵌入设计工作流，重新定义创作边界。',
-    tech: ['Next.js','OpenAI','LangChain','Supabase'],
-    icon: '◉', iconColor: '#00ff9d', bannerColors: ['#001820','#003030','#00ff9d'],
-    tag: 'beta', tagLabel: 'BETA',
-    progress: 60,
-    links: [{ icon:'fa fa-external-link-alt', label:'Live' },{ icon:'fa fa-star', label:'Star' }]
-  },
-  {
-    title: 'VOID ANALYTICS',
-    desc: '实时数据可视化引擎，处理亿级事件流，生成沉浸式三维分析仪表板。',
-    tech: ['D3.js','WebGL','Kafka','ClickHouse'],
-    icon: '◇', iconColor: '#ff2d78', bannerColors: ['#200010','#400020','#ff2d78'],
-    tag: 'featured', tagLabel: 'FEATURED',
-    progress: 92,
-    links: [{ icon:'fab fa-github', label:'GitHub' },{ icon:'fa fa-chart-bar', label:'Demo' }]
-  },
-  {
-    title: 'PHOTON CLI',
-    desc: '极速开发者工具链，一键搭建现代化全栈工程模板，内置 AI 代码审查。',
-    tech: ['Node.js','Rust','WASM','CLI'],
-    icon: '⊕', iconColor: '#ff8c00', bannerColors: ['#201000','#402000','#ff8c00'],
-    tag: 'open', tagLabel: 'OPEN SRC',
-    progress: 100,
-    links: [{ icon:'fab fa-github', label:'GitHub' },{ icon:'fa fa-download', label:'Install' }]
-  },
-  {
-    title: 'ECHO SYNC',
-    desc: '跨端实时协作框架，毫秒级状态同步，支持离线优先与冲突自动合并。',
-    tech: ['Rust','CRDTs','WebRTC','SQLite'],
-    icon: '⊘', iconColor: '#b44fff', bannerColors: ['#180030','#2a0050','#b44fff'],
-    tag: 'beta', tagLabel: 'BETA',
-    progress: 45,
-    links: [{ icon:'fab fa-github', label:'GitHub' },{ icon:'fa fa-paper-plane', label:'RFC' }]
-  }
-];
-
-function buildProjectCards() {
-  const grid = document.getElementById('projects-grid');
-  projectsData.forEach((p, idx) => {
-    const card = document.createElement('div');
-    card.className = 'project-card reveal';
-    card.style.transitionDelay = (idx * 0.08) + 's';
-    card.innerHTML = `
-      <div class="card-glow"></div>
-      <div class="card-banner">
-        <canvas class="card-banner-canvas"></canvas>
-        <span class="card-banner-icon" style="color:${p.iconColor}">${p.icon}</span>
-        <span class="card-tag ${p.tag}">${p.tagLabel}</span>
-      </div>
-      <div class="card-body">
-        <div class="card-title">${p.title}</div>
-        <div class="card-desc">${p.desc}</div>
-        <div class="card-tech">${p.tech.map(t=>`<span class="card-tech-item">${t}</span>`).join('')}</div>
-        <div class="card-links">${p.links.map(l=>`<a href="#" class="card-link"><i class="${l.icon}"></i>${l.label}</a>`).join('')}</div>
-      </div>
-      <div class="card-progress" style="width:${p.progress}%"></div>
-    `;
-    grid.appendChild(card);
-
-    // Banner mini-canvas
-    const bc = card.querySelector('.card-banner-canvas');
-    const bctx = bc.getContext('2d');
-    bc.width = bc.parentElement.offsetWidth || 340;
-    bc.height = 180;
-    drawBannerAnim(bc, bctx, p.bannerColors, p.iconColor);
-
-    // 3D Tilt
-    card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
-      const rotX = -(e.clientY - cy) / rect.height * 18;
-      const rotY = (e.clientX - cx) / rect.width * 18;
-      card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.03)`;
-      card.style.boxShadow = `0 0 30px ${p.iconColor}40, 0 20px 60px rgba(0,0,0,0.5)`;
-      const glow = card.querySelector('.card-glow');
-      const px = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
-      const py = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
-      glow.style.setProperty('--mx', px+'%');
-      glow.style.setProperty('--my', py+'%');
+  /* ── REVEAL ON SCROLL ── */
+  const revealElements = document.querySelectorAll('.reveal');
+  const revealOnScroll = () => {
+    revealElements.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.85) {
+        el.classList.add('visible');
+      }
     });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) scale(1)';
-      card.style.boxShadow = '';
-    });
-  });
-
-  // re-observe new reveal elements
-  document.querySelectorAll('.reveal:not(.observed)').forEach(el => {
-    el.classList.add('observed');
-    revealObserver.observe(el);
-  });
-}
-
-function drawBannerAnim(canvas, ctx, colors, accent) {
-  const w = canvas.width, h = canvas.height;
-  let t = 0;
-  const pts = Array.from({length:6}, () => ({
-    x: Math.random()*w, y: Math.random()*h,
-    vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5,
-    r: 30+Math.random()*60
-  }));
-  function frame() {
-    ctx.clearRect(0,0,w,h);
-    const bg = ctx.createLinearGradient(0,0,w,h);
-    bg.addColorStop(0, colors[0]); bg.addColorStop(0.5, colors[1]); bg.addColorStop(1, colors[0]);
-    ctx.fillStyle = bg; ctx.fillRect(0,0,w,h);
-    for (const p of pts) {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < -p.r) p.x = w+p.r; if (p.x > w+p.r) p.x = -p.r;
-      if (p.y < -p.r) p.y = h+p.r; if (p.y > h+p.r) p.y = -p.r;
-      const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
-      g.addColorStop(0, accent+'30'); g.addColorStop(1,'transparent');
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-    }
-    // Grid overlay
-    ctx.strokeStyle = accent+'15'; ctx.lineWidth = 0.5;
-    for (let x=0;x<w;x+=20) { ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke(); }
-    for (let y=0;y<h;y+=20) { ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke(); }
-    t++;
-    requestAnimationFrame(frame);
-  }
-  frame();
-}
-
-/* ═══════════════════════════════════════════
-   GRAVITY BALL EGG
-═══════════════════════════════════════════ */
-function initGravityCanvas() {
-  const gc = document.getElementById('gravity-canvas');
-  const gctx = gc.getContext('2d');
-  let gW = gc.offsetWidth, gH = gc.offsetHeight;
-  gc.width = gW; gc.height = gH;
-
-  const resize = () => {
-    gW = gc.width = gc.offsetWidth;
-    gH = gc.height = gc.offsetHeight;
   };
-  window.addEventListener('resize', resize);
+  window.addEventListener('scroll', revealOnScroll);
+  window.addEventListener('load', revealOnScroll);
 
-  let gravX = gW/2, gravY = gH/2;
-  let gravActive = false;
-  let gravStrength = 0;
-  let balls = [];
+  /* ── SCROLL PROGRESS & NAVBAR BACKGROUND ── */
+  const scrollBar = document.getElementById('scroll-bar');
+  window.addEventListener('scroll', () => {
+    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (window.pageYOffset / totalHeight) * 100;
+    scrollBar.style.width = progress + '%';
+  });
 
-  class GBall {
-    constructor(x,y) {
-      this.x = x||Math.random()*gW;
-      this.y = y||Math.random()*gH;
-      this.vx = (Math.random()-0.5)*4;
-      this.vy = (Math.random()-0.5)*4;
-      this.r = 4+Math.random()*8;
-      this.mass = this.r;
-      const hues = ['#00d4ff','#b44fff','#00ff9d','#ff2d78','#ff8c00','#fff'];
-      this.color = hues[Math.floor(Math.random()*hues.length)];
-      this.trail = [];
-      this.life = 1;
+  /* ── CUSTOM CURSOR ── */
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
+  window.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    cursorRing.style.left = e.clientX + 'px';
+    cursorRing.style.top = e.clientY + 'px';
+  });
+
+  document.querySelectorAll('a, button, .theory-node').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  });
+
+  /* ── BACKGROUND CANVAS (GLOBAL DRIFTING SPARKS) ── */
+  const bgCanvas = document.getElementById('bg-canvas');
+  const bgCtx = bgCanvas.getContext('2d');
+  let bgParticles = [];
+  let currentSparkThemeColor = { r: 211, g: 47, b: 47 };
+
+  function resizeBg() {
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeBg);
+  resizeBg();
+
+  class BgParticle {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * bgCanvas.width;
+      this.y = bgCanvas.height + Math.random() * 100;
+      this.size = Math.random() * 2.5 + 0.5;
+      this.speedY = Math.random() * 1.5 + 0.5;
+      this.speedX = (Math.random() - 0.5) * 0.8;
+      this.alpha = Math.random() * 0.6 + 0.2;
+      this.life = Math.random() * 200 + 100;
     }
     update() {
-      if (gravActive) {
-        const dx = gravX - this.x, dy = gravY - this.y;
-        const dist = Math.sqrt(dx*dx+dy*dy) + 1;
-        const force = gravStrength * 800 / (dist*dist);
-        this.vx += (dx/dist) * force;
-        this.vy += (dy/dist) * force;
+      this.y -= this.speedY;
+      this.x += this.speedX;
+      this.life--;
+      if (this.life <= 0 || this.x < 0 || this.x > bgCanvas.width || this.y < 0) {
+        this.reset();
       }
-      // Damping
-      this.vx *= 0.99; this.vy *= 0.99;
-      // Max speed
-      const spd = Math.sqrt(this.vx*this.vx+this.vy*this.vy);
-      if (spd > 12) { this.vx = this.vx/spd*12; this.vy = this.vy/spd*12; }
-      this.x += this.vx; this.y += this.vy;
-      // Bounds bounce
-      if (this.x < this.r) { this.x = this.r; this.vx *= -0.7; }
-      if (this.x > gW-this.r) { this.x = gW-this.r; this.vx *= -0.7; }
-      if (this.y < this.r) { this.y = this.r; this.vy *= -0.7; }
-      if (this.y > gH-this.r) { this.y = gH-this.r; this.vy *= -0.7; }
-      this.trail.push({x:this.x, y:this.y});
-      if (this.trail.length > 18) this.trail.shift();
     }
     draw() {
-      // Trail
-      for (let i=1;i<this.trail.length;i++) {
-        const alpha = i/this.trail.length * 0.4;
-        const r = this.r * (i/this.trail.length) * 0.6;
-        gctx.beginPath();
-        gctx.arc(this.trail[i].x, this.trail[i].y, r, 0, Math.PI*2);
-        gctx.fillStyle = this.color.replace(')',`,${alpha})`).replace('rgb','rgba').replace('#','rgba(') ;
-        // simpler approach:
-        gctx.globalAlpha = alpha;
-        gctx.fillStyle = this.color;
-        gctx.fill();
+      bgCtx.save();
+      bgCtx.globalAlpha = this.alpha;
+      bgCtx.fillStyle = `rgb(${currentSparkThemeColor.r}, ${currentSparkThemeColor.g}, ${currentSparkThemeColor.b})`;
+      bgCtx.shadowBlur = 10;
+      bgCtx.shadowColor = `rgb(${currentSparkThemeColor.r}, ${currentSparkThemeColor.g}, ${currentSparkThemeColor.b})`;
+      bgCtx.beginPath();
+      bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      bgCtx.fill();
+      bgCtx.restore();
+    }
+  }
+
+  for (let i = 0; i < 70; i++) {
+    bgParticles.push(new BgParticle());
+  }
+
+  let mousePosition = { x: -1000, y: -1000 };
+  window.addEventListener('mousemove', (e) => {
+    mousePosition.x = e.clientX;
+    mousePosition.y = e.clientY;
+  });
+
+  function animateBg() {
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    bgParticles.forEach(p => {
+      p.update();
+      // Distance check for mouse fire ignition
+      const dx = p.x - mousePosition.x;
+      const dy = p.y - mousePosition.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if(dist < 120) {
+        p.y -= 1.5; // Accelerate upward if close to mouse
+        p.alpha = Math.min(p.alpha + 0.05, 1);
       }
-      gctx.globalAlpha = 1;
-      // Ball
-      const grad = gctx.createRadialGradient(this.x-this.r*0.3,this.y-this.r*0.3,0,this.x,this.y,this.r);
-      grad.addColorStop(0,'rgba(255,255,255,0.9)');
-      grad.addColorStop(0.3, this.color);
-      grad.addColorStop(1,'rgba(0,0,0,0.3)');
-      gctx.beginPath(); gctx.arc(this.x,this.y,this.r,0,Math.PI*2);
-      gctx.fillStyle = grad; gctx.fill();
-      // Glow
-      gctx.beginPath(); gctx.arc(this.x,this.y,this.r*2,0,Math.PI*2);
-      const g2 = gctx.createRadialGradient(this.x,this.y,this.r*0.5,this.x,this.y,this.r*2);
-      g2.addColorStop(0, this.color+'60'); g2.addColorStop(1,'transparent');
-      gctx.fillStyle = g2; gctx.fill();
+      p.draw();
+    });
+    requestAnimationFrame(animateBg);
+  }
+  animateBg();
+
+  function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
+  }
+
+  function changeSparkColor(hex) {
+    const rgb = hexToRgb(hex);
+    if(rgb) currentSparkThemeColor = rgb;
+    
+    document.querySelectorAll('.theory-node').forEach(node => node.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  /* ── INTERACTIVE SPARK LAB CANVAS ── */
+  const labCanvas = document.getElementById('spark-canvas');
+  const labCtx = labCanvas.getContext('2d');
+  let labParticles = [];
+  let isDragging = false;
+  let labMouse = { x: 0, y: 0 };
+
+  function resizeLab() {
+    const rect = labCanvas.parentElement.getBoundingClientRect();
+    labCanvas.width = rect.width;
+  }
+  window.addEventListener('resize', resizeLab);
+  resizeLab();
+
+  class LabParticle {
+    constructor(x, y, isWild = false) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * (isWild ? 8 : 3);
+      this.vy = (Math.random() - 0.5) * (isWild ? 8 : 3) - (isWild ? 2 : 1);
+      this.radius = Math.random() * 3 + 1;
+      this.color = Math.random() > 0.4 ? 'var(--spark-red)' : 'var(--spark-gold)';
+      this.alpha = 1;
+      this.decay = Math.random() * 0.015 + 0.005;
+    }
+    update() {
+      // Attracted by gravity mouse dragging field
+      if (isDragging) {
+        const dx = labMouse.x - this.x;
+        const dy = labMouse.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance > 5) {
+          this.vx += (dx / distance) * 0.2;
+          this.vy += (dy / distance) * 0.2;
+        }
+      }
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vx *= 0.98;
+      this.vy *= 0.98;
+      this.alpha -= this.decay;
+    }
+    draw() {
+      labCtx.save();
+      labCtx.globalAlpha = this.alpha;
+      labCtx.fillStyle = this.color;
+      labCtx.shadowBlur = 12;
+      labCtx.shadowColor = this.color;
+      labCtx.beginPath();
+      labCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      labCtx.fill();
+      labCtx.restore();
     }
   }
 
-  // Spawn initial balls
-  for (let i=0;i<20;i++) balls.push(new GBall());
+  function getCanvasMousePos(e) {
+    const rect = labCanvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  }
 
-  // Event handlers
-  gc.addEventListener('click', e => {
-    const rect = gc.getBoundingClientRect();
-    balls.push(new GBall(e.clientX-rect.left, e.clientY-rect.top));
-    if (balls.length > 80) balls.splice(0, balls.length-80);
+  labCanvas.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    labMouse = getCanvasMousePos(e);
+    for(let i=0; i<15; i++) labParticles.push(new LabParticle(labMouse.x, labMouse.y));
   });
-  gc.addEventListener('dblclick', () => { balls = []; for (let i=0;i<20;i++) balls.push(new GBall()); });
-  gc.addEventListener('mousedown', e => {
-    const rect = gc.getBoundingClientRect();
-    gravX = e.clientX-rect.left; gravY = e.clientY-rect.top;
-    gravActive = true; gravStrength = 0;
+
+  labCanvas.addEventListener('mousemove', (e) => {
+    if(!isDragging) return;
+    labMouse = getCanvasMousePos(e);
+    labParticles.push(new LabParticle(labMouse.x, labMouse.y));
   });
-  gc.addEventListener('mousemove', e => {
-    if (gravActive) {
-      const rect = gc.getBoundingClientRect();
-      gravX = e.clientX-rect.left; gravY = e.clientY-rect.top;
-      gravStrength = Math.min(gravStrength + 0.05, 1);
+
+  window.addEventListener('mouseup', () => isDragging = false);
+
+  labCanvas.addEventListener('dblclick', () => {
+    // Supernova fusion trigger
+    for(let i=0; i<120; i++) {
+      labParticles.push(new LabParticle(labCanvas.width/2, labCanvas.height/2, true));
     }
   });
-  gc.addEventListener('mouseup', () => { gravActive = false; gravStrength = 0; });
-  gc.addEventListener('mouseleave', () => { gravActive = false; gravStrength = 0; });
 
-  // Touch
-  gc.addEventListener('touchstart', e => {
-    e.preventDefault();
-    const rect = gc.getBoundingClientRect();
-    const t = e.touches[0];
-    gravX = t.clientX-rect.left; gravY = t.clientY-rect.top;
-    gravActive = true;
-    balls.push(new GBall(gravX, gravY));
-  },{passive:false});
-  gc.addEventListener('touchmove', e => {
-    e.preventDefault();
-    const rect = gc.getBoundingClientRect();
-    const t = e.touches[0];
-    gravX = t.clientX-rect.left; gravY = t.clientY-rect.top;
-    gravStrength = Math.min(gravStrength + 0.05, 1);
-  },{passive:false});
-  gc.addEventListener('touchend', () => { gravActive = false; gravStrength = 0; });
+  function animateLab() {
+    labCtx.fillStyle = 'rgba(5, 2, 2, 0.3)'; // Trailing effect
+    labCtx.fillRect(0, 0, labCanvas.width, labCanvas.height);
 
-  function drawGravityField() {
-    if (!gravActive) return;
-    gctx.save();
-    const rings = 4;
-    for (let i=rings;i>0;i--) {
-      const rad = gravStrength * 80 * i / rings;
-      gctx.beginPath(); gctx.arc(gravX, gravY, rad, 0, Math.PI*2);
-      gctx.strokeStyle = `rgba(180,79,255,${0.15*(1-i/rings)})`;
-      gctx.lineWidth = 1; gctx.stroke();
-    }
-    gctx.restore();
+    labParticles = labParticles.filter(p => p.alpha > 0);
+    labParticles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+
+    requestAnimationFrame(animateLab);
   }
-
-  function gravFrame() {
-    gctx.clearRect(0,0,gW,gH);
-    // Scanlines
-    for (let y=0;y<gH;y+=4) {
-      gctx.fillStyle = 'rgba(0,0,0,0.06)';
-      gctx.fillRect(0,y,gW,1);
-    }
-    drawGravityField();
-    for (const b of balls) { b.update(); b.draw(); }
-    requestAnimationFrame(gravFrame);
-  }
-  gravFrame();
-}
-
-/* ═══════════════════════════════════════════
-   NAV HAMBURGER
-═══════════════════════════════════════════ */
-const hamburger = document.getElementById('hamburger');
-const mobileNav = document.getElementById('mobile-nav');
-let navOpen = false;
-
-hamburger.addEventListener('click', () => {
-  navOpen = !navOpen;
-  mobileNav.classList.toggle('open', navOpen);
-  const spans = hamburger.querySelectorAll('span');
-  if (navOpen) {
-    spans[0].style.transform = 'rotate(45deg) translate(5px,5px)';
-    spans[1].style.opacity = '0';
-    spans[2].style.transform = 'rotate(-45deg) translate(5px,-5px)';
-  } else {
-    spans.forEach(s => { s.style.transform=''; s.style.opacity=''; });
-  }
-});
-
-window.closeMobileNav = function() {
-  navOpen = false;
-  mobileNav.classList.remove('open');
-  hamburger.querySelectorAll('span').forEach(s => { s.style.transform=''; s.style.opacity=''; });
-};
-
-/* ═══════════════════════════════════════════
-   INIT ALL
-═══════════════════════════════════════════ */
-function initAll() {
-  typewrite();
-  triggerGlitch();
-  buildProjectCards();
-  initGravityCanvas();
-  // Re-observe all reveals
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-}
-
-})();
+  animateLab();
 </script>
+
 </body>
 </html>
