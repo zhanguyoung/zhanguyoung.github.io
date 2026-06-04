@@ -3,422 +3,276 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>实践论 · 星星之火 可以燎原</title>
+<title>实践论 · 纯粹文献版</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Long+Cang&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;600;900&family=Poppins:wght@200;400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --spark-red: #d32f2f;
-    --spark-gold: #fbc02d;
-    --spark-orange: #f57c00;
-    --bg-dark: #0a0505;
-    --bg-paper: #f5f2eb;
-    --card-dark: rgba(35, 15, 15, 0.8);
-    --glow-red: 0 0 20px rgba(211, 47, 47, 0.6), 0 0 40px rgba(211, 47, 47, 0.3);
-    --glow-gold: 0 0 20px rgba(251, 192, 45, 0.5);
-    --font-title: 'Ma Shan Zheng', 'Long Cang', cursive;
+    --primary-red: #cc2929;
+    --ink-black: #0a0a0a;
+    --text-white: #f5f5f7;
+    --text-muted: rgba(245, 245, 247, 0.4);
+    --border-color: rgba(245, 245, 247, 0.08);
     --font-serif: 'Noto Serif SC', serif;
-    --font-mono: 'Share Tech Mono', monospace;
-    --active-color: #fbc02d;
+    --font-sans: 'Poppins', sans-serif;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; background: var(--ink-black); }
 
   body {
-    background: var(--bg-dark);
-    color: #f5f2eb;
-    font-family: var(--font-serif);
+    background: var(--ink-black);
+    color: var(--text-white);
+    font-family: var(--font-sans);
     overflow-x: hidden;
-    cursor: none;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* ── CUSTOM CURSOR (SPARK EFFECT) ── */
-  #cursor {
-    position: fixed; top: 0; left: 0; width: 8px; height: 8px;
-    background: var(--spark-gold); border-radius: 50%; pointer-events: none;
-    z-index: 9999; transform: translate(-50%,-50%);
-    box-shadow: var(--glow-gold); transition: transform 0.1s;
-  }
-  #cursor-ring {
-    position: fixed; top: 0; left: 0; width: 32px; height: 32px;
-    border: 2px dashed var(--spark-red); border-radius: 50%; pointer-events: none;
-    z-index: 9998; transform: translate(-50%,-50%);
-    transition: transform 0.15s ease-out;
-    animation: spin 6s linear infinite;
-  }
-  @keyframes spin { from{transform:translate(-50%,-50%) rotate(0deg)} to{transform:translate(-50%,-50%) rotate(360deg)} }
-  body.cursor-hover #cursor { transform: translate(-50%,-50%) scale(2); background: var(--spark-red); box-shadow: var(--glow-red); }
-  body.cursor-hover #cursor-ring { border-color: var(--spark-gold); transform: translate(-50%,-50%) scale(1.5); }
-
-  /* ── CANVAS BACKGROUND ── */
   #bg-canvas {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     z-index: 0; pointer-events: none;
   }
 
-  /* ── SCROLL PROGRESS ── */
   #scroll-bar {
-    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
-    background: linear-gradient(90deg, var(--spark-red), var(--spark-orange), var(--spark-gold));
-    z-index: 9999; box-shadow: 0 0 10px var(--spark-red);
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: var(--primary-red); z-index: 9999;
   }
 
-  /* ── NAVIGATION ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    padding: 20px 40px; display: flex; align-items: center; justify-content: space-between;
-    background: rgba(10, 5, 5, 0.85); backdrop-filter: blur(15px);
-    border-bottom: 2px solid rgba(251, 192, 45, 0.2);
+    padding: 30px 60px; display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(10,10,10,0.8), transparent);
+    backdrop-filter: blur(10px);
   }
   .nav-logo {
-    font-family: var(--font-title); font-size: 2rem;
-    color: var(--spark-gold); text-shadow: var(--glow-gold);
-    text-decoration: none; letter-spacing: 2px;
+    font-family: var(--font-serif); font-size: 1.5rem; font-weight: 900;
+    color: var(--text-white); text-decoration: none; letter-spacing: 4px;
   }
-  .nav-logo span { color: var(--spark-red); text-shadow: var(--glow-red); }
+  .nav-logo span { color: var(--primary-red); }
   .nav-links { display: flex; gap: 40px; list-style: none; }
   .nav-links a {
-    font-size: 1rem; font-weight: 700; color: rgba(245,242,235,0.7);
-    text-decoration: none; letter-spacing: 1px; position: relative;
-    transition: color 0.3s;
+    font-size: 0.85rem; color: var(--text-muted); text-decoration: none; 
+    letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s;
   }
-  .nav-links a::after {
-    content: '★'; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%) scale(0);
-    color: var(--spark-gold); transition: transform 0.3s; font-size: 0.6rem;
-  }
-  .nav-links a:hover { color: var(--spark-gold); }
-  .nav-links a:hover::after { transform: translateX(-50%) scale(1); }
+  .nav-links a:hover { color: var(--text-white); }
 
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-  .hamburger span { display: block; width: 24px; height: 2px; background: var(--spark-gold); transition: all 0.3s; }
-
-  /* ── HERO SECTION ── */
   #hero {
     height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; position: relative; overflow: hidden;
-    padding: 0 20px; text-align: center;
+    justify-content: center; padding: 0 10%; position: relative;
   }
-  .hero-bg-accent {
-    position: absolute; font-size: 45vh; font-family: var(--font-title);
-    color: rgba(211, 47, 47, 0.05); z-index: 1; user-select: none; pointer-events: none;
-    animation: pulse-star 4s ease-in-out infinite;
+  .hero-content { max-width: 900px; z-index: 2; }
+  .hero-meta {
+    font-size: 0.8rem; color: var(--primary-red); letter-spacing: 6px;
+    margin-bottom: 24px; font-weight: 700;
   }
-  @keyframes pulse-star { 0%,100%{transform:scale(1);opacity:0.5} 50%{transform:scale(1.05);opacity:0.8} }
-
-  .hero-content { position: relative; z-index: 2; max-width: 900px; }
-  .hero-star { color: var(--spark-gold); font-size: 2.5rem; text-shadow: var(--glow-gold); margin-bottom: 20px; }
-  
   .hero-title {
-    font-family: var(--font-title); font-size: clamp(3.5rem, 10vw, 7.5rem);
-    font-weight: 900; line-height: 1.2; margin-bottom: 20px;
-    background: linear-gradient(180deg, #fff 30%, var(--spark-gold) 70%, var(--spark-red) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    font-family: var(--font-serif); font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 900; line-height: 1.15; margin-bottom: 30px; letter-spacing: -2px;
   }
-  
-  .hero-subtitle {
-    font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 700;
-    color: var(--spark-paper); letter-spacing: 4px; margin-bottom: 40px;
-    border-y: 1px solid rgba(245,242,235,0.2); padding: 10px 0;
-    display: inline-block;
-  }
-
+  .hero-title span { color: var(--primary-red); }
   .hero-quote {
-    font-size: 1.1rem; font-style: italic; color: rgba(245,242,235,0.6);
-    max-width: 600px; margin: 0 auto 40px; line-height: 1.8;
+    font-family: var(--font-serif); font-size: 1.2rem; line-height: 2;
+    color: rgba(245,245,247,0.85); border-left: 2px solid var(--primary-red);
+    padding-left: 24px; margin-bottom: 40px; text-align: justify;
   }
+  .btn-explore {
+    font-size: 0.85rem; letter-spacing: 3px; color: var(--text-white);
+    text-decoration: none; border-bottom: 1px solid var(--text-white);
+    padding-bottom: 6px; transition: color 0.3s, border-color 0.3s;
+  }
+  .btn-explore:hover { color: var(--primary-red); border-color: var(--primary-red); }
 
-  .btn {
-    font-size: 1rem; font-weight: 700; letter-spacing: 2px;
-    padding: 14px 36px; text-decoration: none; display: inline-block;
-    position: relative; transition: all 0.3s; cursor: pointer; border: none;
-    background: transparent; border: 2px solid var(--spark-gold); color: var(--spark-gold);
-    box-shadow: inset 0 0 10px rgba(251,192,45,0.1);
-  }
-  .btn:hover {
-    background: var(--spark-gold); color: var(--bg-dark);
-    box-shadow: var(--glow-gold); transform: translateY(-3px);
-  }
-
-  /* ── SECTION GENERAL ── */
-  section { padding: 120px 40px; position: relative; z-index: 2; }
-  .section-header { text-align: center; margin-bottom: 80px; }
-  .section-badge {
-    color: var(--spark-red); font-size: 1.5rem; margin-bottom: 10px; display: block;
-    text-shadow: var(--glow-red);
+  section { padding: 140px 10%; position: relative; z-index: 2; }
+  .section-num {
+    font-family: var(--font-sans); font-size: 0.8rem; color: var(--primary-red);
+    display: block; margin-bottom: 16px; letter-spacing: 4px; font-weight: 700;
   }
   .section-title {
-    font-family: var(--font-title); font-size: clamp(2.2rem, 5vw, 4rem);
-    color: var(--spark-gold); letter-spacing: 2px;
+    font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 600; margin-bottom: 80px; letter-spacing: -1px;
   }
 
-  /* ── ABOUT / CORE THEORY ── */
-  .theory-grid {
-    max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 1.2fr; gap: 50px;
+  .theory-container {
+    display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px;
   }
-  .intro-card {
-    background: var(--card-dark); border: 2px solid rgba(211, 47, 47, 0.3);
-    padding: 45px; position: relative; backdrop-filter: blur(20px);
-    border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  .theory-sticky { position: sticky; top: 180px; height: fit-content; }
+  .theory-abstract {
+    font-family: var(--font-serif); font-size: 1.3rem; line-height: 1.9;
+    color: rgba(245,245,247,0.75); text-align: justify;
   }
-  .intro-card::before {
-    content: '★ 核心释义'; position: absolute; top: -15px; left: 30px;
-    background: var(--spark-red); color: #fff; padding: 4px 15px;
-    font-size: 0.8rem; font-weight: 700; letter-spacing: 1px;
+  .theory-flow { display: flex; flex-direction: column; gap: 40px; }
+  .flow-step {
+    border-top: 1px solid var(--border-color); padding-top: 30px;
+    cursor: pointer; transition: border-color 0.4s;
   }
-  .intro-title { font-size: 1.8rem; color: var(--spark-gold); margin-bottom: 20px; border-bottom: 1px dashed rgba(251,192,45,0.3); padding-bottom: 10px; }
-  .intro-text { font-size: 1.1rem; line-height: 2; color: rgba(245,242,235,0.8); text-align: justify; }
+  .flow-step:hover, .flow-step.active { border-top-color: var(--primary-red); }
+  .step-meta {
+    font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .flow-step.active .step-meta { color: var(--primary-red); }
+  .step-title {
+    font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 16px;
+    transition: transform 0.4s;
+  }
+  .flow-step:hover .step-title { transform: translateX(10px); }
+  .step-desc { font-family: var(--font-serif); font-size: 1.05rem; line-height: 1.9; color: rgba(245,245,247,0.7); text-align: justify; }
 
-  .panel-nodes { display: flex; flex-direction: column; gap: 24px; }
-  .theory-node {
-    background: rgba(30,30,30,0.4); border-left: 4px solid var(--spark-red);
-    padding: 24px; transition: all 0.3s; cursor: pointer;
-  }
-  .theory-node:hover, .theory-node.active {
-    background: rgba(211, 47, 47, 0.1); border-left-color: var(--spark-gold);
-    transform: translateX(100px) scale(1.02);
-    transform: translateX(10px);
-  }
-  .node-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .node-title { font-size: 1.3rem; color: var(--spark-gold); font-weight: 700; }
-  .node-tag { font-size: 0.8rem; color: #fff; background: var(--spark-red); padding: 2px 8px; font-weight: 700; }
-  .node-desc { font-size: 0.95rem; line-height: 1.6; color: rgba(245,242,235,0.6); }
-
-  /* ── BLOCKS / THE MATRIX ── */
   .matrix-grid {
-    max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 30px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 40px;
   }
-  .matrix-card {
-    background: var(--card-dark); border: 1px solid rgba(251,192,45,0.2);
-    padding: 30px; position: relative; overflow: hidden; transition: all 0.3s;
-    display: flex; flex-direction: column; justify-content: space-between;
+  .matrix-box {
+    background: rgba(255,255,255,0.01); border: 1px solid var(--border-color);
+    padding: 40px; position: relative; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .matrix-card:hover {
-    border-color: var(--spark-gold); box-shadow: var(--glow-gold);
-    transform: translateY(-5px);
+  .matrix-box:hover {
+    background: rgba(255,255,255,0.02); border-color: rgba(245,245,247,0.2);
+    transform: translateY(-8px);
   }
-  .matrix-icon { font-size: 2rem; color: var(--spark-red); margin-bottom: 20px; }
-  .matrix-heading { font-size: 1.4rem; color: #fff; margin-bottom: 15px; font-family: var(--font-serif); }
-  .matrix-body { font-size: 0.95rem; line-height: 1.8; color: rgba(245,242,235,0.7); text-align: justify; margin-bottom: 20px; }
-  .matrix-badge {
-    font-family: var(--font-mono); font-size: 0.75rem; color: var(--spark-gold);
-    border-top: 1px solid rgba(245,242,235,0.1); padding-top: 10px; display: block;
-  }
+  .matrix-num { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono); }
+  .matrix-title { font-family: var(--font-serif); font-size: 1.35rem; margin: 24px 0 16px; }
+  .matrix-desc { font-family: var(--font-serif); font-size: 1rem; line-height: 1.9; color: rgba(245,245,247,0.65); text-align: justify; }
 
-  /* ── LABORATORY (SPARK INTERACTION) ── */
-  .lab-wrapper { max-width: 900px; margin: 0 auto; text-align: center; }
-  .lab-hint { font-size: 1rem; color: rgba(245,242,235,0.5); margin-bottom: 25px; }
-  #spark-canvas {
-    width: 100%; height: 400px; display: block;
-    background: #050202; border: 2px solid var(--spark-red);
-    box-shadow: inset 0 0 30px rgba(211,47,47,0.2); cursor: crosshair;
+  .lab-layout {
+    display: grid; grid-template-columns: 1.5fr 1fr; gap: 60px; align-items: center;
   }
-
-  /* ── CONTACT / FINAL FOOTER ── */
-  #final-zone {
-    text-align: center; background: linear-gradient(180deg, transparent, #120505);
-    padding: 100px 40px;
+  .lab-ui { max-width: 400px; }
+  .lab-title { font-family: var(--font-serif); font-size: 1.8rem; margin-bottom: 20px; }
+  .lab-text { font-family: var(--font-serif); font-size: 1rem; line-height: 1.9; color: rgba(245,245,247,0.65); margin-bottom: 30px; }
+  .canvas-container {
+    position: relative; width: 100%; border: 1px solid var(--border-color); background: #000;
   }
-  .final-title { font-family: var(--font-title); font-size: 3rem; color: var(--spark-gold); margin-bottom: 20px; }
-  .final-text { font-size: 1.2rem; line-height: 1.8; max-width: 700px; margin: 0 auto 40px; color: rgba(245,242,235,0.7); }
-  
-  .footer-divider { border: none; border-top: 1px solid rgba(251,192,45,0.2); margin: 60px 0 30px; }
-  .footer-text { font-family: var(--font-mono); font-size: 0.8rem; color: rgba(245,242,235,0.3); letter-spacing: 2px; }
+  #spark-canvas { width: 100%; height: 450px; display: block; cursor: crosshair; }
 
-  /* ── REVEAL SYSTEM ── */
-  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
+  footer {
+    padding: 100px 10% 60px; border-top: 1px solid var(--border-color);
+    display: flex; flex-direction: column; align-items: center; gap: 40px;
+  }
+  .footer-quote { font-family: var(--font-serif); font-size: 1.4rem; text-align: center; max-width: 800px; line-height: 2; color: rgba(245,245,247,0.85); }
+  .footer-copy { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; font-family: var(--font-mono); }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .theory-grid { grid-template-columns: 1fr; }
-    nav { padding: 15px 20px; }
-    .nav-links { display: none; }
-    .hamburger { display: flex; }
-    #cursor, #cursor-ring { display: none; }
-    body { cursor: default; }
+  @media (max-width: 960px) {
+    .theory-container, .lab-layout { grid-template-columns: 1fr; gap: 50px; }
+    .theory-sticky { position: static; }
+    nav { padding: 20px 30px; }
+    section { padding: 100px 30px; }
   }
 </style>
 </head>
 <body>
 
-<!-- LOADER -->
-<div id="loader" style="position:fixed; inset:0; z-index:10000; background:var(--bg-dark); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; transition: opacity 0.5s;">
-  <div style="font-family:var(--font-title); font-size:3rem; color:var(--spark-gold); text-shadow:var(--glow-gold);">星火</div>
-  <div style="width:200px; height:2px; background:rgba(251,192,45,0.2); position:relative;">
-    <div id="loader-bar" style="height:100%; background:var(--spark-red); width:0%; transition: width 0.1s;"></div>
-  </div>
-  <div style="font-size:0.8rem; color:rgba(245,242,235,0.5); letter-spacing:2px;">正在汇聚火种...</div>
-</div>
-
-<!-- CURSOR -->
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
-
-<!-- SCROLL PROGRESS -->
 <div id="scroll-bar"></div>
-
-<!-- BACKGROUND CANVAS -->
 <canvas id="bg-canvas"></canvas>
 
-<!-- NAV -->
 <nav>
   <a href="#hero" class="nav-logo">实践<span>论</span></a>
   <ul class="nav-links">
-    <li><a href="#theory">核心理路</a></li>
-    <li><a href="#matrix">思想矩阵</a></li>
-    <li><a href="#lab">燎原星火</a></li>
+    <li><a href="#theory">认识发展</a></li>
+    <li><a href="#matrix">论著原文</a></li>
+    <li><a href="#lab">引力交互</a></li>
   </ul>
-  <div class="hamburger" id="hamburger" onclick="toggleMobileNav()">
-    <span></span><span></span><span></span>
-  </div>
 </nav>
 
-<!-- MAIN CONTENT -->
 <main>
   <!-- HERO -->
   <section id="hero">
-    <div class="hero-bg-accent">★</div>
-    <div class="hero-content reveal">
-      <div class="hero-star">★ ★ ★ ★ ★</div>
-      <h1 class="hero-title">星星之火 可以燎原</h1>
-      <p class="hero-subtitle">毛泽东《实践论》当代研读与视觉阐释</p>
-      <p class="hero-quote">“辩证唯物论的认识论把实践提到第一位，认为人的认识一点也离不开实践，排斥一切否认实践重要性、使认识离开实践的错误理论。”</p>
-      <div>
-        <a href="#theory" class="btn">进入思想宇宙</a>
-      </div>
+    <div class="hero-content">
+      <div class="hero-meta">MAO ZEDONG • 1937</div>
+      <h1 class="hero-title">实践论</h1>
+      <p class="hero-quote">
+        “辩证唯物论的认识论把实践提到第一位，认为人的认识一点也离不开实践，排斥一切否认实践重要性、使认识离开实践的错误理论。马克思主义者认为人类的生产活动是最基本的实践活动，是决定其他一切活动的东西。”
+      </p>
+      <a href="#theory" class="btn-explore">论著正文研读</a>
     </div>
   </section>
 
-  <!-- THEORY / ABOUT -->
+  <!-- THEORY / ARCHITECTURE -->
   <section id="theory">
-    <div class="section-header reveal">
-      <span class="section-badge">THEORY</span>
-      <h2 class="section-title">认识与实践的辩证循环</h2>
-    </div>
-    <div class="theory-grid">
-      <div class="intro-card reveal">
-        <h3 class="intro-title">实践是认识的基石</h3>
-        <p class="intro-text">
-          《实践论》写于1937年7月，是毛泽东借用马克思主义认识论对中国革命经验做出的哲学总结。它系统地阐明了人类认识的发展规律：从实践中产生感性认识，再由感性认识飞跃到理性认识，最终理性认识必须回归实践去检验与改造世界。
+    <span class="section-num">01 / PROCESS</span>
+    <h2 class="section-title">认识的发展过程</h2>
+    
+    <div class="theory-container">
+      <div class="theory-sticky">
+        <p class="theory-abstract">
+          “原来人在实践过程中，开始只是看到过程中各个事物的现象方面，看到各个事物的片面，看到各个事物之间的外部联系。”
         </p>
       </div>
-      <div class="panel-nodes reveal">
-        <div class="theory-node active" onclick="changeSparkColor('#d32f2f')">
-          <div class="node-header">
-            <span class="node-title">一、源于实践（感性阶段）</span>
-            <span class="node-tag">第一飞跃</span>
-          </div>
-          <p class="node-desc">人在实践过程中，刚开始只能看到事物的现象、片面和外部联系，这是认识的感性阶段。它是认识的起点，但还不够深刻。</p>
+      <div class="theory-flow">
+        <div class="flow-step active" onclick="setSparkGravity(0.02)">
+          <div class="step-meta">STAGE 01 . 感性认识阶段</div>
+          <h3 class="step-title">现象、片面与外部联系</h3>
+          <p class="step-desc">“这叫做认识的感性阶段，就是感觉和印象的阶段。也就是这各个事物投射到认识主体的脑子里，引起了感觉，在脑子里产生了许多的印象，和这些印象间的大概的外部的联系。”</p>
         </div>
-        <div class="theory-node" onclick="changeSparkColor('#fbc02d')">
-          <div class="node-header">
-            <span class="node-title">二、成于理论（理性阶段）</span>
-            <span class="node-tag">重组深化</span>
-          </div>
-          <p class="node-desc">随着实践经验的反复累积，通过“去粗取精、去伪存真、由此及彼、由表及里”的思考，感性认识跃升为概念、定理与理论，触及事物的本质。</p>
+        <div class="flow-step" onclick="setSparkGravity(-0.05)">
+          <div class="step-meta">STAGE 02 . 理性认识阶段</div>
+          <h3 class="step-title">概念、判断和推理</h3>
+          <p class="step-desc">“社会实践的继续，使人们在实践中引起感觉和印象的东西反复了多次，于是在人们的脑子里生起了一个突变（毫无疑问是认识过程中的突变），产生了概念。概念这种东西已经不是事物的现象，不是事物的片面，不是它们的外部联系，而是抓着了事物的本质，事物的全体，事物的内部联系了。”</p>
         </div>
-        <div class="theory-node" onclick="changeSparkColor('#f57c00')">
-          <div class="node-header">
-            <span class="node-title">三、归于改造（检验阶段）</span>
-            <span class="node-tag">第二飞跃</span>
-          </div>
-          <p class="node-desc">理性认识是否正确，唯一的判别标准是将其放回社会实践中去。如果能达到预想的目的，认识才算得到了证实。</p>
+        <div class="flow-step" onclick="setSparkGravity(0.1)">
+          <div class="step-meta">STAGE 03 . 理性认识到革命实践</div>
+          <h3 class="step-title">检验理论和改造世界</h3>
+          <p class="step-desc">“马克思主义的哲学认为十分重要的问题，不在于懂得了客观世界的规律性，因而能够解释世界，而在于拿了这种客观规律性的认识去能动地改造世界。”</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- MATRIX / PROJECTS CONTAINER -->
+  <!-- MATRIX / CORE THOUGHTS -->
   <section id="matrix">
-    <div class="section-header reveal">
-      <span class="section-badge">MATRIX</span>
-      <h2 class="section-title">核心思想矩阵</h2>
-    </div>
+    <span class="section-num">02 / EXTRACTS</span>
+    <h2 class="section-title">核心文献选段</h2>
+    
     <div class="matrix-grid">
-      <div class="matrix-card reveal">
-        <div class="matrix-icon"><i class="fa-solid align-justify fa-eye"></i></div>
-        <h3 class="matrix-heading">反对教条主义</h3>
-        <p class="matrix-body">有些教条主义者墨守成规，将马克思主义词句当作万能灵药，拒绝在变幻的具体中国革命现实中去观察、去实践。这是离开实践的空中楼阁。</p>
-        <span class="matrix-badge">SECTION .01</span>
+      <div class="matrix-box">
+        <span class="matrix-num">// 第1部分</span>
+        <h3 class="matrix-title">实践是认识的来源</h3>
+        <p class="matrix-desc">“如果要直接地认识某种或某些事物，就只有亲身参加于变革现实、变革某种或某些事物的实践的斗争中，才能触及那个或那些事物的现象；也只有亲身参加于变革现实的实践的斗争中，才能暴露那个或那些事物的本质而理解它们。”</p>
       </div>
-      <div class="matrix-card reveal">
-        <div class="matrix-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-        <h3 class="matrix-heading">反对经验主义</h3>
-        <p class="matrix-body">经验主义者只拘泥于局部的狭隘经验，把片面的感性认识误认为绝对真理，缺乏理论的高度，同样无法指导中国革命走向全局性胜利。</p>
-        <span class="matrix-badge">SECTION .02</span>
+      <div class="matrix-box">
+        <span class="matrix-num">// 第2部分</span>
+        <h3 class="matrix-title">知行统一观</h3>
+        <p class="matrix-desc">“通过实践而发现真理，又通过实践而证实真理和发展真理。从感性认识而能动地发展到理性认识，又从理性认识而能动地指导革命实践，改造主观世界和客观世界。”</p>
       </div>
-      <div class="matrix-card reveal">
-        <div class="matrix-icon"><i class="fa-solid fa-infinity"></i></div>
-        <h3 class="matrix-heading">无限循环的真理</h3>
-        <p class="matrix-body">“实践、认识、再实践、再认识，这种形式，循环往复以至无穷，而实践和认识之每一循环的内容，都比较地进到了高一级的程度。”</p>
-        <span class="matrix-badge">SECTION .03</span>
+      <div class="matrix-box">
+        <span class="matrix-num">// 第3部分</span>
+        <h3 class="matrix-title">论两个错误倾向</h3>
+        <p class="matrix-desc">“我们反对唯心论和机械唯物论，反对教条主义和经验主义。我们的结论是主观和客观、理论和实践、知和行的具体的历史的统一，反对一切离开具体历史的错误思想。”</p>
       </div>
     </div>
   </section>
 
-  <!-- LAB / EGG -->
+  <!-- INTERACTIVE LAB -->
   <section id="lab">
-    <div class="lab-wrapper">
-      <div class="section-header reveal">
-        <span class="section-badge">INTERACTION</span>
-        <h2 class="section-title">物理场实验：星火激荡</h2>
+    <span class="section-num">03 / INTERACTIVE FIELD</span>
+    <h2 class="section-title">微观引力场：星火动力学</h2>
+    
+    <div class="lab-layout">
+      <div class="canvas-container">
+        <canvas id="spark-canvas"></canvas>
       </div>
-      <p class="lab-hint reveal">点击产生零星火种 · 鼠标拖拽赋予星火引力 · 双击使群星聚变</p>
-      <canvas id="spark-canvas" class="reveal"></canvas>
+      <div class="lab-ui">
+        <h3 class="lab-title">客观运动的数字化映射</h3>
+        <p class="lab-text">
+          “客观现实世界的变化运动永远没有完结，人们在实践中对于真理的认识也就永远没有完结。”
+          <br><br>
+          该交互场模拟了微观粒子的不平衡状态。通过更改左侧“认识发展”所处的阶段，将直接改动数学模型中的粒子万有引力常数。
+        </p>
+        <div style="font-size:0.8rem; color:var(--text-muted); font-family:var(--font-mono)">
+          [ 鼠标移入: 引入局部扰动 ]<br>[ 鼠标点击: 生成初始粒子群 ]
+        </div>
+      </div>
     </div>
-  </section>
-
-  <!-- FOOTER SECTION -->
-  <section id="final-zone">
-    <div class="reveal">
-      <h2 class="final-title">实践是检验真理的唯一标准</h2>
-      <p class="final-text">唯有投身于变革现实的洪流之中，思想才具有生命力。星星之火，终将在无尽的探索中燃遍整片原野。</p>
-    </div>
-    <hr class="footer-divider">
-    <div class="footer-text">THE PRACTICE CONCEPT • SINGLE FILE ARCHIVE • 2026</div>
   </section>
 </main>
 
+<footer>
+  <p class="footer-quote">“实践、认识、再实践、再认识，这种形式，循环往复以至无穷，而实践和认识之每一循环的内容，都比较地进到了高一级的程度。”</p>
+  <hr style="width:100%; border:none; border-top:1px solid var(--border-color);">
+  <div class="footer-copy">ON PRACTICE • TEXTUAL ARCHIVE • 2026</div>
+</footer>
+
 <script>
-  /* ── LOADER SCRIPT ── */
-  window.addEventListener('DOMContentLoaded', () => {
-    const bar = document.getElementById('loader-bar');
-    const loader = document.getElementById('loader');
-    let width = 0;
-    const interval = setInterval(() => {
-      if (width >= 100) {
-        clearInterval(interval);
-        setTimeout(() => {
-          loader.style.opacity = '0';
-          setTimeout(() => loader.style.display = 'none', 500);
-        }, 200);
-      } else {
-        width += 5;
-        bar.style.width = width + '%';
-      }
-    }, 30);
-  });
-
-  /* ── REVEAL ON SCROLL ── */
-  const revealElements = document.querySelectorAll('.reveal');
-  const revealOnScroll = () => {
-    revealElements.forEach(el => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight * 0.85) {
-        el.classList.add('visible');
-      }
-    });
-  };
-  window.addEventListener('scroll', revealOnScroll);
-  window.addEventListener('load', revealOnScroll);
-
-  /* ── SCROLL PROGRESS & NAVBAR BACKGROUND ── */
+  /* ── SCROLL PROGRESS ── */
   const scrollBar = document.getElementById('scroll-bar');
   window.addEventListener('scroll', () => {
     const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -426,26 +280,10 @@
     scrollBar.style.width = progress + '%';
   });
 
-  /* ── CUSTOM CURSOR ── */
-  const cursor = document.getElementById('cursor');
-  const cursorRing = document.getElementById('cursor-ring');
-  window.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-    cursorRing.style.left = e.clientX + 'px';
-    cursorRing.style.top = e.clientY + 'px';
-  });
-
-  document.querySelectorAll('a, button, .theory-node').forEach(el => {
-    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-  });
-
-  /* ── BACKGROUND CANVAS (GLOBAL DRIFTING SPARKS) ── */
+  /* ── STREAM BACKGROUND CANVAS ── */
   const bgCanvas = document.getElementById('bg-canvas');
   const bgCtx = bgCanvas.getContext('2d');
   let bgParticles = [];
-  let currentSparkThemeColor = { r: 211, g: 47, b: 47 };
 
   function resizeBg() {
     bgCanvas.width = window.innerWidth;
@@ -455,114 +293,70 @@
   resizeBg();
 
   class BgParticle {
-    constructor() {
-      this.reset();
-    }
+    constructor() { this.reset(); }
     reset() {
       this.x = Math.random() * bgCanvas.width;
-      this.y = bgCanvas.height + Math.random() * 100;
-      this.size = Math.random() * 2.5 + 0.5;
-      this.speedY = Math.random() * 1.5 + 0.5;
-      this.speedX = (Math.random() - 0.5) * 0.8;
-      this.alpha = Math.random() * 0.6 + 0.2;
-      this.life = Math.random() * 200 + 100;
+      this.y = Math.random() * bgCanvas.height;
+      this.size = Math.random() * 1.5 + 0.2;
+      this.vx = (Math.random() - 0.5) * 0.3;
+      this.vy = -Math.random() * 0.4 - 0.1;
+      this.alpha = Math.random() * 0.3;
     }
     update() {
-      this.y -= this.speedY;
-      this.x += this.speedX;
-      this.life--;
-      if (this.life <= 0 || this.x < 0 || this.x > bgCanvas.width || this.y < 0) {
-        this.reset();
-      }
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.y < 0 || this.x < 0 || this.x > bgCanvas.width) this.reset();
     }
     draw() {
-      bgCtx.save();
-      bgCtx.globalAlpha = this.alpha;
-      bgCtx.fillStyle = `rgb(${currentSparkThemeColor.r}, ${currentSparkThemeColor.g}, ${currentSparkThemeColor.b})`;
-      bgCtx.shadowBlur = 10;
-      bgCtx.shadowColor = `rgb(${currentSparkThemeColor.r}, ${currentSparkThemeColor.g}, ${currentSparkThemeColor.b})`;
+      bgCtx.fillStyle = `rgba(204, 41, 41, ${this.alpha})`;
       bgCtx.beginPath();
       bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
       bgCtx.fill();
-      bgCtx.restore();
     }
   }
 
-  for (let i = 0; i < 70; i++) {
-    bgParticles.push(new BgParticle());
-  }
-
-  let mousePosition = { x: -1000, y: -1000 };
-  window.addEventListener('mousemove', (e) => {
-    mousePosition.x = e.clientX;
-    mousePosition.y = e.clientY;
-  });
+  for(let i=0; i<80; i++) bgParticles.push(new BgParticle());
 
   function animateBg() {
     bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-    bgParticles.forEach(p => {
-      p.update();
-      // Distance check for mouse fire ignition
-      const dx = p.x - mousePosition.x;
-      const dy = p.y - mousePosition.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if(dist < 120) {
-        p.y -= 1.5; // Accelerate upward if close to mouse
-        p.alpha = Math.min(p.alpha + 0.05, 1);
-      }
-      p.draw();
-    });
+    bgParticles.forEach(p => { p.update(); p.draw(); });
     requestAnimationFrame(animateBg);
   }
   animateBg();
 
-  function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : null;
-  }
-
-  function changeSparkColor(hex) {
-    const rgb = hexToRgb(hex);
-    if(rgb) currentSparkThemeColor = rgb;
-    
-    document.querySelectorAll('.theory-node').forEach(node => node.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-  }
-
-  /* ── INTERACTIVE SPARK LAB CANVAS ── */
+  /* ── INTERACTIVE SPARK CANVAS ── */
   const labCanvas = document.getElementById('spark-canvas');
   const labCtx = labCanvas.getContext('2d');
   let labParticles = [];
-  let isDragging = false;
-  let labMouse = { x: 0, y: 0 };
+  let mouse = { x: null, y: null, active: false };
+  let globalGravityModifier = 0.02;
 
   function resizeLab() {
     const rect = labCanvas.parentElement.getBoundingClientRect();
     labCanvas.width = rect.width;
+    labCanvas.height = 450;
   }
   window.addEventListener('resize', resizeLab);
   resizeLab();
 
   class LabParticle {
-    constructor(x, y, isWild = false) {
+    constructor(x, y) {
       this.x = x;
       this.y = y;
-      this.vx = (Math.random() - 0.5) * (isWild ? 8 : 3);
-      this.vy = (Math.random() - 0.5) * (isWild ? 8 : 3) - (isWild ? 2 : 1);
-      this.radius = Math.random() * 3 + 1;
-      this.color = Math.random() > 0.4 ? 'var(--spark-red)' : 'var(--spark-gold)';
+      this.vx = (Math.random() - 0.5) * 2;
+      this.vy = (Math.random() - 0.5) * 2 - 0.5;
+      this.radius = Math.random() * 2 + 0.5;
       this.alpha = 1;
-      this.decay = Math.random() * 0.015 + 0.005;
+      this.decay = Math.random() * 0.01 + 0.003;
     }
     update() {
-      // Attracted by gravity mouse dragging field
-      if (isDragging) {
-        const dx = labMouse.x - this.x;
-        const dy = labMouse.y - this.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance > 5) {
-          this.vx += (dx / distance) * 0.2;
-          this.vy += (dy / distance) * 0.2;
+      if (mouse.active) {
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 180) {
+          this.vx += (dx / dist) * globalGravityModifier;
+          this.vy += (dy / dist) * globalGravityModifier;
         }
       }
       this.x += this.vx;
@@ -574,9 +368,7 @@
     draw() {
       labCtx.save();
       labCtx.globalAlpha = this.alpha;
-      labCtx.fillStyle = this.color;
-      labCtx.shadowBlur = 12;
-      labCtx.shadowColor = this.color;
+      labCtx.fillStyle = this.alpha > 0.5 ? 'var(--primary-red)' : 'rgba(245,245,247,0.6)';
       labCtx.beginPath();
       labCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
       labCtx.fill();
@@ -584,44 +376,47 @@
     }
   }
 
-  function getCanvasMousePos(e) {
+  function createSparksInBulk() {
+    for(let i=0; i<30; i++) {
+      labParticles.push(new LabParticle(Math.random() * labCanvas.width, Math.random() * labCanvas.height));
+    }
+  }
+  createSparksInBulk();
+
+  function getMousePos(e) {
     const rect = labCanvas.getBoundingClientRect();
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    };
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
-  labCanvas.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    labMouse = getCanvasMousePos(e);
-    for(let i=0; i<15; i++) labParticles.push(new LabParticle(labMouse.x, labMouse.y));
-  });
-
   labCanvas.addEventListener('mousemove', (e) => {
-    if(!isDragging) return;
-    labMouse = getCanvasMousePos(e);
-    labParticles.push(new LabParticle(labMouse.x, labMouse.y));
+    mouse.active = true;
+    const pos = getMousePos(e);
+    mouse.x = pos.x; mouse.y = pos.y;
+    if(Math.random() > 0.6) labParticles.push(new LabParticle(mouse.x, mouse.y));
   });
 
-  window.addEventListener('mouseup', () => isDragging = false);
-
-  labCanvas.addEventListener('dblclick', () => {
-    // Supernova fusion trigger
-    for(let i=0; i<120; i++) {
-      labParticles.push(new LabParticle(labCanvas.width/2, labCanvas.height/2, true));
-    }
+  labCanvas.addEventListener('mouseleave', () => mouse.active = false);
+  labCanvas.addEventListener('mousedown', (e) => {
+    const pos = getMousePos(e);
+    for(let i=0; i<15; i++) labParticles.push(new LabParticle(pos.x, pos.y));
   });
+
+  function setSparkGravity(val) {
+    globalGravityModifier = val;
+    document.querySelectorAll('.flow-step').forEach(el => el.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
 
   function animateLab() {
-    labCtx.fillStyle = 'rgba(5, 2, 2, 0.3)'; // Trailing effect
+    labCtx.fillStyle = 'rgba(10, 10, 10, 0.4)';
     labCtx.fillRect(0, 0, labCanvas.width, labCanvas.height);
 
+    if (labParticles.length < 40) {
+      labParticles.push(new LabParticle(Math.random() * labCanvas.width, labCanvas.height - 10));
+    }
+
     labParticles = labParticles.filter(p => p.alpha > 0);
-    labParticles.forEach(p => {
-      p.update();
-      p.draw();
-    });
+    labParticles.forEach(p => { p.update(); p.draw(); });
 
     requestAnimationFrame(animateLab);
   }
