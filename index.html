@@ -3,425 +3,337 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>实践论 · 纯粹文献版</title>
+<title>On Practice - Reference Engine [Wolfram Style]</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;600;900&family=Poppins:wght@200;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary-red: #cc2929;
-    --ink-black: #0a0a0a;
-    --text-white: #f5f5f7;
-    --text-muted: rgba(245, 245, 247, 0.4);
-    --border-color: rgba(245, 245, 247, 0.08);
-    --font-serif: 'Noto Serif SC', serif;
-    --font-sans: 'Poppins', sans-serif;
+    --wa-orange: #f9690e;
+    --wa-blue: #3b5998;
+    --wa-bg: #f8f9fa;
+    --wa-border: #d1d5db;
+    --wa-text: #222222;
+    --wa-text-muted: #666666;
+    --wa-sidebar-bg: #eceff1;
+    --font-mono: 'Fira Code', monospace;
+    --font-sans: 'Noto Sans SC', sans-serif;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; background: var(--ink-black); }
-
+  
   body {
-    background: var(--ink-black);
-    color: var(--text-white);
+    background: var(--wa-bg);
+    color: var(--wa-text);
     font-family: var(--font-sans);
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
   }
 
-  #bg-canvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 0; pointer-events: none;
+  /* ── LEFT ENGINE SIDEBAR ── */
+  .engine-sidebar {
+    width: 320px;
+    background: var(--wa-sidebar-bg);
+    border-right: 1px solid var(--wa-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
   }
 
-  #scroll-bar {
-    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-    background: var(--primary-red); z-index: 9999;
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--wa-border);
+    background: #fff;
+  }
+  .sidebar-header h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--wa-orange);
+    letter-spacing: 0.5px;
+    font-family: var(--font-mono);
+  }
+  .sidebar-header .version-tag {
+    font-size: 0.75rem;
+    color: var(--wa-text-muted);
+    font-family: var(--font-mono);
+    margin-top: 4px;
   }
 
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    padding: 30px 60px; display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(to bottom, rgba(10,10,10,0.8), transparent);
-    backdrop-filter: blur(10px);
+  .entry-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px 0;
   }
-  .nav-logo {
-    font-family: var(--font-serif); font-size: 1.5rem; font-weight: 900;
-    color: var(--text-white); text-decoration: none; letter-spacing: 4px;
+  .entry-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s ease;
   }
-  .nav-logo span { color: var(--primary-red); }
-  .nav-links { display: flex; gap: 40px; list-style: none; }
-  .nav-links a {
-    font-size: 0.85rem; color: var(--text-muted); text-decoration: none; 
-    letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s;
+  .entry-item:hover {
+    background: rgba(0,0,0,0.03);
   }
-  .nav-links a:hover { color: var(--text-white); }
-
-  #hero {
-    height: 100vh; display: flex; flex-direction: column;
-    justify-content: center; padding: 0 10%; position: relative;
+  .entry-item.active {
+    background: #fff;
+    border-left-color: var(--wa-orange);
   }
-  .hero-content { max-width: 900px; z-index: 2; }
-  .hero-meta {
-    font-size: 0.8rem; color: var(--primary-red); letter-spacing: 6px;
-    margin-bottom: 24px; font-weight: 700;
+  .entry-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--wa-orange);
+    font-weight: 500;
   }
-  .hero-title {
-    font-family: var(--font-serif); font-size: clamp(3rem, 8vw, 5.5rem);
-    font-weight: 900; line-height: 1.15; margin-bottom: 30px; letter-spacing: -2px;
-  }
-  .hero-title span { color: var(--primary-red); }
-  .hero-quote {
-    font-family: var(--font-serif); font-size: 1.2rem; line-height: 2;
-    color: rgba(245,245,247,0.85); border-left: 2px solid var(--primary-red);
-    padding-left: 24px; margin-bottom: 40px; text-align: justify;
-  }
-  .btn-explore {
-    font-size: 0.85rem; letter-spacing: 3px; color: var(--text-white);
-    text-decoration: none; border-bottom: 1px solid var(--text-white);
-    padding-bottom: 6px; transition: color 0.3s, border-color 0.3s;
-  }
-  .btn-explore:hover { color: var(--primary-red); border-color: var(--primary-red); }
-
-  section { padding: 140px 10%; position: relative; z-index: 2; }
-  .section-num {
-    font-family: var(--font-sans); font-size: 0.8rem; color: var(--primary-red);
-    display: block; margin-bottom: 16px; letter-spacing: 4px; font-weight: 700;
-  }
-  .section-title {
-    font-family: var(--font-serif); font-size: clamp(2rem, 4vw, 3.5rem);
-    font-weight: 600; margin-bottom: 80px; letter-spacing: -1px;
+  .entry-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--wa-text);
   }
 
-  .theory-container {
-    display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px;
+  /* ── RIGHT PARSER CONTENT ── */
+  .engine-viewer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--wa-bg);
   }
-  .theory-sticky { position: sticky; top: 180px; height: fit-content; }
-  .theory-abstract {
-    font-family: var(--font-serif); font-size: 1.3rem; line-height: 1.9;
-    color: rgba(245,245,247,0.75); text-align: justify;
-  }
-  .theory-flow { display: flex; flex-direction: column; gap: 40px; }
-  .flow-step {
-    border-top: 1px solid var(--border-color); padding-top: 30px;
-    cursor: pointer; transition: border-color 0.4s;
-  }
-  .flow-step:hover, .flow-step.active { border-top-color: var(--primary-red); }
-  .step-meta {
-    font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;
-    letter-spacing: 2px;
-  }
-  .flow-step.active .step-meta { color: var(--primary-red); }
-  .step-title {
-    font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 16px;
-    transition: transform 0.4s;
-  }
-  .flow-step:hover .step-title { transform: translateX(10px); }
-  .step-desc { font-family: var(--font-serif); font-size: 1.05rem; line-height: 1.9; color: rgba(245,245,247,0.7); text-align: justify; }
 
-  .matrix-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 40px;
+  /* TOP CONTROL BAR */
+  .control-bar {
+    height: 57px;
+    border-bottom: 1px solid var(--wa-border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 30px;
+    justify-content: space-between;
   }
-  .matrix-box {
-    background: rgba(255,255,255,0.01); border: 1px solid var(--border-color);
-    padding: 40px; position: relative; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  .query-display {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--wa-blue);
+    background: #f1f3f4;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--wa-border);
+    width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  .matrix-box:hover {
-    background: rgba(255,255,255,0.02); border-color: rgba(245,245,247,0.2);
-    transform: translateY(-8px);
+  .engine-status {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #2e7d32;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
-  .matrix-num { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono); }
-  .matrix-title { font-family: var(--font-serif); font-size: 1.35rem; margin: 24px 0 16px; }
-  .matrix-desc { font-family: var(--font-serif); font-size: 1rem; line-height: 1.9; color: rgba(245,245,247,0.65); text-align: justify; }
+  .status-dot {
+    width: 6px; height: 6px; background: #2e7d32; border-radius: 50%;
+  }
 
-  .lab-layout {
-    display: grid; grid-template-columns: 1.5fr 1fr; gap: 60px; align-items: center;
+  /* DATA PODS CONTAINER */
+  .pods-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
   }
-  .lab-ui { max-width: 400px; }
-  .lab-title { font-family: var(--font-serif); font-size: 1.8rem; margin-bottom: 20px; }
-  .lab-text { font-family: var(--font-serif); font-size: 1rem; line-height: 1.9; color: rgba(245,245,247,0.65); margin-bottom: 30px; }
-  .canvas-container {
-    position: relative; width: 100%; border: 1px solid var(--border-color); background: #000;
-  }
-  #spark-canvas { width: 100%; height: 450px; display: block; cursor: crosshair; }
 
-  footer {
-    padding: 100px 10% 60px; border-top: 1px solid var(--border-color);
-    display: flex; flex-direction: column; align-items: center; gap: 40px;
+  /* WOLFRAM POD STRUCTURE */
+  .wa-pod {
+    background: #fff;
+    border: 1px solid var(--wa-border);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow: hidden;
   }
-  .footer-quote { font-family: var(--font-serif); font-size: 1.4rem; text-align: center; max-width: 800px; line-height: 2; color: rgba(245,245,247,0.85); }
-  .footer-copy { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; font-family: var(--font-mono); }
+  .pod-title {
+    background: #f1f3f4;
+    padding: 10px 15px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--wa-text-muted);
+    border-bottom: 1px solid var(--wa-border);
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    letter-spacing: 0.5px;
+  }
+  .pod-content {
+    padding: 24px;
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--wa-text);
+    text-align: justify;
+  }
+  .pod-content.mono {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--wa-blue);
+    background: #fafafa;
+    line-height: 1.6;
+  }
 
-  @media (max-width: 960px) {
-    .theory-container, .lab-layout { grid-template-columns: 1fr; gap: 50px; }
-    .theory-sticky { position: static; }
-    nav { padding: 20px 30px; }
-    section { padding: 100px 30px; }
+  /* CUSTOM SCROLLBAR FOR DATA DENSITY */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    .engine-sidebar { width: 100%; height: 35vh; }
+    .engine-viewer { height: 65vh; }
+    .query-display { width: 50%; }
   }
 </style>
 </head>
 <body>
 
-<div id="scroll-bar"></div>
-<canvas id="bg-canvas"></canvas>
-
-<nav>
-  <a href="#hero" class="nav-logo">实践<span>论</span></a>
-  <ul class="nav-links">
-    <li><a href="#theory">认识发展</a></li>
-    <li><a href="#matrix">论著原文</a></li>
-    <li><a href="#lab">引力交互</a></li>
-  </ul>
-</nav>
-
-<main>
-  <!-- HERO -->
-  <section id="hero">
-    <div class="hero-content">
-      <div class="hero-meta">MAO ZEDONG • 1937</div>
-      <h1 class="hero-title">实践论</h1>
-      <p class="hero-quote">
-        “辩证唯物论的认识论把实践提到第一位，认为人的认识一点也离不开实践，排斥一切否认实践重要性、使认识离开实践的错误理论。马克思主义者认为人类的生产活动是最基本的实践活动，是决定其他一切活动的东西。”
-      </p>
-      <a href="#theory" class="btn-explore">论著正文研读</a>
+  <!-- LEFT: EXECUTABLE ENTRIES -->
+  <aside class="engine-sidebar">
+    <div class="sidebar-header">
+      <h1>Maoism.OnPractice.Engine</h1>
+      <div class="version-tag">SYSTEM SOURCE: 1937.07 // REF-V1.0</div>
     </div>
-  </section>
+    <div class="entry-list" id="entry-list-container">
+      <!-- Generated Dynamically by Data Matrix -->
+    </div>
+  </aside>
 
-  <!-- THEORY / ARCHITECTURE -->
-  <section id="theory">
-    <span class="section-num">01 / PROCESS</span>
-    <h2 class="section-title">认识的发展过程</h2>
-    
-    <div class="theory-container">
-      <div class="theory-sticky">
-        <p class="theory-abstract">
-          “原来人在实践过程中，开始只是看到过程中各个事物的现象方面，看到各个事物的片面，看到各个事物之间的外部联系。”
-        </p>
-      </div>
-      <div class="theory-flow">
-        <div class="flow-step active" onclick="setSparkGravity(0.02)">
-          <div class="step-meta">STAGE 01 . 感性认识阶段</div>
-          <h3 class="step-title">现象、片面与外部联系</h3>
-          <p class="step-desc">“这叫做认识的感性阶段，就是感觉和印象的阶段。也就是这各个事物投射到认识主体的脑子里，引起了感觉，在脑子里产生了许多的印象，和这些印象间的大概的外部的联系。”</p>
-        </div>
-        <div class="flow-step" onclick="setSparkGravity(-0.05)">
-          <div class="step-meta">STAGE 02 . 理性认识阶段</div>
-          <h3 class="step-title">概念、判断和推理</h3>
-          <p class="step-desc">“社会实践的继续，使人们在实践中引起感觉和印象的东西反复了多次，于是在人们的脑子里生起了一个突变（毫无疑问是认识过程中的突变），产生了概念。概念这种东西已经不是事物的现象，不是事物的片面，不是它们的外部联系，而是抓着了事物的本质，事物的全体，事物的内部联系了。”</p>
-        </div>
-        <div class="flow-step" onclick="setSparkGravity(0.1)">
-          <div class="step-meta">STAGE 03 . 理性认识到革命实践</div>
-          <h3 class="step-title">检验理论和改造世界</h3>
-          <p class="step-desc">“马克思主义的哲学认为十分重要的问题，不在于懂得了客观世界的规律性，因而能够解释世界，而在于拿了这种客观规律性的认识去能动地改造世界。”</p>
-        </div>
+  <!-- RIGHT: MATHEMATICAL-LIKE INTERPRETATION -->
+  <main class="engine-viewer">
+    <div class="control-bar">
+      <div class="query-display" id="current-query">Query: Select an interpretation entry...</div>
+      <div class="engine-status">
+        <span class="status-dot"></span>
+        <span>PARSER READY</span>
       </div>
     </div>
-  </section>
 
-  <!-- MATRIX / CORE THOUGHTS -->
-  <section id="matrix">
-    <span class="section-num">02 / EXTRACTS</span>
-    <h2 class="section-title">核心文献选段</h2>
-    
-    <div class="matrix-grid">
-      <div class="matrix-box">
-        <span class="matrix-num">// 第1部分</span>
-        <h3 class="matrix-title">实践是认识的来源</h3>
-        <p class="matrix-desc">“如果要直接地认识某种或某些事物，就只有亲身参加于变革现实、变革某种或某些事物的实践的斗争中，才能触及那个或那些事物的现象；也只有亲身参加于变革现实的实践的斗争中，才能暴露那个或那些事物的本质而理解它们。”</p>
-      </div>
-      <div class="matrix-box">
-        <span class="matrix-num">// 第2部分</span>
-        <h3 class="matrix-title">知行统一观</h3>
-        <p class="matrix-desc">“通过实践而发现真理，又通过实践而证实真理和发展真理。从感性认识而能动地发展到理性认识，又从理性认识而能动地指导革命实践，改造主观世界和客观世界。”</p>
-      </div>
-      <div class="matrix-box">
-        <span class="matrix-num">// 第3部分</span>
-        <h3 class="matrix-title">论两个错误倾向</h3>
-        <p class="matrix-desc">“我们反对唯心论和机械唯物论，反对教条主义和经验主义。我们的结论是主观和客观、理论和实践、知和行的具体的历史的统一，反对一切离开具体历史的错误思想。”</p>
+    <div class="pods-container" id="pods-output">
+      <!-- Default state before pod computation -->
+      <div class="wa-pod">
+        <div class="pod-title">Input Interpretation</div>
+        <div class="pod-content">请在左侧解析面板中点击任意文献索引节点，以调用并检索《实践论》核心正文原案。</div>
       </div>
     </div>
-  </section>
-
-  <!-- INTERACTIVE LAB -->
-  <section id="lab">
-    <span class="section-num">03 / INTERACTIVE FIELD</span>
-    <h2 class="section-title">微观引力场：星火动力学</h2>
-    
-    <div class="lab-layout">
-      <div class="canvas-container">
-        <canvas id="spark-canvas"></canvas>
-      </div>
-      <div class="lab-ui">
-        <h3 class="lab-title">客观运动的数字化映射</h3>
-        <p class="lab-text">
-          “客观现实世界的变化运动永远没有完结，人们在实践中对于真理的认识也就永远没有完结。”
-          <br><br>
-          该交互场模拟了微观粒子的不平衡状态。通过更改左侧“认识发展”所处的阶段，将直接改动数学模型中的粒子万有引力常数。
-        </p>
-        <div style="font-size:0.8rem; color:var(--text-muted); font-family:var(--font-mono)">
-          [ 鼠标移入: 引入局部扰动 ]<br>[ 鼠标点击: 生成初始粒子群 ]
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <p class="footer-quote">“实践、认识、再实践、再认识，这种形式，循环往复以至无穷，而实践和认识之每一循环的内容，都比较地进到了高一级的程度。”</p>
-  <hr style="width:100%; border:none; border-top:1px solid var(--border-color);">
-  <div class="footer-copy">ON PRACTICE • TEXTUAL ARCHIVE • 2026</div>
-</footer>
+  </main>
 
 <script>
-  /* ── SCROLL PROGRESS ── */
-  const scrollBar = document.getElementById('scroll-bar');
-  window.addEventListener('scroll', () => {
-    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = (window.pageYOffset / totalHeight) * 100;
-    scrollBar.style.width = progress + '%';
-  });
-
-  /* ── STREAM BACKGROUND CANVAS ── */
-  const bgCanvas = document.getElementById('bg-canvas');
-  const bgCtx = bgCanvas.getContext('2d');
-  let bgParticles = [];
-
-  function resizeBg() {
-    bgCanvas.width = window.innerWidth;
-    bgCanvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resizeBg);
-  resizeBg();
-
-  class BgParticle {
-    constructor() { this.reset(); }
-    reset() {
-      this.x = Math.random() * bgCanvas.width;
-      this.y = Math.random() * bgCanvas.height;
-      this.size = Math.random() * 1.5 + 0.2;
-      this.vx = (Math.random() - 0.5) * 0.3;
-      this.vy = -Math.random() * 0.4 - 0.1;
-      this.alpha = Math.random() * 0.3;
+  // HIGH-DENSITY TEXT MATRIX (NO COMMENTARY, ONLY ORIGINAL TEXT)
+  const practiceDataMatrix = [
+    {
+      id: "SECTION_01",
+      title: "一、实践与唯物论基础",
+      query: "Mao.OnPractice.1937.Section_1_Base",
+      pods: [
+        { type: "meta", label: "Document Context", text: "列宁说：“实践高于（理论的）认识，因为它不仅具有普遍性的优点，而且具有直接现实性的优点。”" },
+        { type: "source", label: "论著原文 / Primary Text", text: "辩证唯物论的认识论把实践提到第一位，认为人的认识一点也离不开实践，排斥一切否认实践重要性、使认识离开实践的错误理论。马克思主义者认为人类的生产活动是最基本的实践活动，是决定其他一切活动的东西。" },
+        { type: "source", label: "论著原文 / Primary Text", text: "人的认识，主要地依赖于物质生产活动，逐渐地了解自然的现象、自然的性质、自然的规律性、人的自身和自然的关系；而且经过生产活动，也在各种不同程度上逐渐地认识了人与人一定的相互关系。这一切知识，离开生产活动是不能得到的。" }
+      ]
+    },
+    {
+      id: "SECTION_02",
+      title: "二、认识的发展：感性阶段",
+      query: "Mao.OnPractice.1937.Section_2_Perception",
+      pods: [
+        { type: "meta", label: "Cognitive Stage", text: "Data Slice: Phase 1 (Feeling and Impression)" },
+        { type: "source", label: "论著原文 / Primary Text", text: "原来人在实践过程中，开始只是看到过程中各个事物的现象方面，看到各个事物的片面，看到各个事物之间的外部联系。例如外来考察团到延安，头一二天，他们看到了延安的地形、街道、房屋，接触了许多人，参加了宴会、晚会和群众大会，听到了各种说话，看到了各种文件，这一切叫做事物的现象，事物的各个片面和这些事物的外部联系。" },
+        { type: "source", label: "论著原文 / Primary Text", text: "这叫做认识的感性阶段，就是感觉和印象的阶段。也就是这各个事物投射到认识主体的脑子里，引起了感觉，在脑子里产生了许多的印象，和这些印象间的大概的外部的联系。这是认识的第一个阶段。在这个阶段中，人们还不能造成深刻的概念，作出合乎逻辑的结论。" }
+      ]
+    },
+    {
+      id: "SECTION_03",
+      title: "三、认识的突变：理性阶段",
+      query: "Mao.OnPractice.1937.Section_3_Rationality",
+      pods: [
+        { type: "meta", label: "Cognitive Stage", text: "Data Slice: Phase 2 (Concept, Judgment, Inference)" },
+        { type: "source", label: "论著原文 / Primary Text", text: "社会实践的继续，使人们在实践中引起感觉和印象的东西反复了多次，于是在人们的脑子里生起了一个突变（毫无疑问是认识过程中的突变），产生了概念。概念这种东西已经不是事物的现象，不是事物的片面，不是它们的外部联系，而是抓着了事物的本质，事物的全体，事物的内部联系了。" },
+        { type: "source", label: "论著原文 / Primary Text", text: "概念和感觉的差异，数量上的差异外，特别是本质上的差异。循此继进，使用判断和推理的方法，就可产生出合乎逻辑的结论来。《三国演义》上所谓“眉头一皱，计上心来”，或者我们常说话中的“让我想一想”，就是人在脑子中运用概念以作判断和推理的工夫。这就是理性的认识。" }
+      ]
+    },
+    {
+      id: "SECTION_04",
+      title: "四、真理的第一飞跃判定",
+      query: "Mao.OnPractice.1937.Section_4_First_Leap",
+      pods: [
+        { type: "meta", label: "Transition Verification", text: "From Sensation to Logical Knowledge" },
+        { type: "source", label: "论著原文 / Primary Text", text: "认识的真正任务在于经过感觉而到达于思维，到达于逐步了解客观事物的内部矛盾，了解它的规律性，了解这一过程和那一过程间的内部联系，即到达于理性的认识。重复地说，理性认识依赖于感性认识，感性认识有待于发展到理性认识，这就是辩证唯物论的认识论。" },
+        { type: "source", label: "论著原文 / Primary Text", text: "哲学史上有所谓“唯理论”一派，只承认理性的真实性，不承认经验的真实性……又有所谓“经验论”一派，只承认经验的真实性……这两派的错误，都在于断片性。完全地反映整个的事物，反映事物的本质，反映事物的内部规律性，就必须经过思考作用，将丰富的感觉材料加以去粗取精、去伪存真、由此及彼、由表及里的改造制作工夫，造成概念和理论的系统，就必须从感性认识跃进到理性认识。" }
+      ]
+    },
+    {
+      id: "SECTION_05",
+      title: "五、理性回归实践：第二飞跃",
+      query: "Mao.OnPractice.1937.Section_5_Second_Leap",
+      pods: [
+        { type: "meta", label: "Final Operation", text: "Transformation of the Objective World" },
+        { type: "source", label: "论著原文 / Primary Text", text: "认识从实践始，经过实践得到了理论的认识，还须回到实践去。认识的能动作用，不但表现于从感性认识到理性认识之能动的飞跃，更重要地还必须表现于从理性的认识到革命的实践这一个飞跃。抓着了世界的规律性的认识，必须把它再回到改造世界的实践中去，再用到生产的实践、革命阶级斗争和民族斗争的实践以及科学实验的实践中去。" },
+        { type: "source", label: "论著原文 / Primary Text", text: "马克思主义的哲学认为十分重要的问题，不在于懂得了客观世界的规律性，因而能够解释世界，而在于拿了这种客观规律性的认识去能动地改造世界。从马克思主义看来，理论是否正确，论证其正确性的唯一方法，只能是将其付诸社会实践。因为人类用某种理论去改造客观世界时，如果达到了预想的目的，该理论的正确性便被证实了。" }
+      ]
+    },
+    {
+      id: "SECTION_06",
+      title: "六、总结：辩证循环终局",
+      query: "Mao.OnPractice.1937.Section_6_Conclusion",
+      pods: [
+        { type: "meta", label: "Theorem Conclusion", text: "Infinite Iteration of Practice & Knowledge" },
+        { type: "source", label: "论著原文 / Primary Text", text: "我们反对唯心论和机械唯物论，反对教条主义和经验主义。我们的结论是主观和客观、理论和实践、知和行的具体的历史的统一，反对一切离开具体历史的错误思想。社会的发展到了今天的时代，正确地认识世界和改造世界的责任，已经历史地落在无产阶级及其政党的肩上。" },
+        { type: "source", label: "论著原文 / Primary Text", text: "通过实践而发现真理，又通过实践而证实真理和发展真理。从感性认识而能动地发展到理性认识，又从理性认识而能动地指导革命实践，改造主观世界和客观世界。实践、认识、再实践、再认识，这种形式，循环往复以至无穷，而实践和认识之每一循环的内容，都比较地进到了高一级的程度。这就是辩证唯物论的全部认识论，这就是辩证唯物论的知行统一观。" }
+      ]
     }
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      if (this.y < 0 || this.x < 0 || this.x > bgCanvas.width) this.reset();
-    }
-    draw() {
-      bgCtx.fillStyle = `rgba(204, 41, 41, ${this.alpha})`;
-      bgCtx.beginPath();
-      bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      bgCtx.fill();
-    }
+  ];
+
+  // DOM RENDERING ENGINE
+  const container = document.getElementById('entry-list-container');
+  const queryDisplay = document.getElementById('current-query');
+  const podsOutput = document.getElementById('pods-output');
+
+  function initEngine() {
+    practiceDataMatrix.forEach((data, index) => {
+      const item = document.createElement('div');
+      item.className = 'entry-item';
+      item.innerHTML = `
+        <span class="entry-index">In[${index + 1}]</span>
+        <span class="entry-title">${data.title}</span>
+      `;
+      item.addEventListener('click', () => executeQuery(data, item));
+      container.appendChild(item);
+    });
   }
 
-  for(let i=0; i<80; i++) bgParticles.push(new BgParticle());
+  function executeQuery(data, element) {
+    // Toggle Active State
+    document.querySelectorAll('.entry-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
 
-  function animateBg() {
-    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-    bgParticles.forEach(p => { p.update(); p.draw(); });
-    requestAnimationFrame(animateBg);
-  }
-  animateBg();
+    // Update Query Bar
+    queryDisplay.innerText = `Query: ${data.query}`;
 
-  /* ── INTERACTIVE SPARK CANVAS ── */
-  const labCanvas = document.getElementById('spark-canvas');
-  const labCtx = labCanvas.getContext('2d');
-  let labParticles = [];
-  let mouse = { x: null, y: null, active: false };
-  let globalGravityModifier = 0.02;
-
-  function resizeLab() {
-    const rect = labCanvas.parentElement.getBoundingClientRect();
-    labCanvas.width = rect.width;
-    labCanvas.height = 450;
-  }
-  window.addEventListener('resize', resizeLab);
-  resizeLab();
-
-  class LabParticle {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-      this.vx = (Math.random() - 0.5) * 2;
-      this.vy = (Math.random() - 0.5) * 2 - 0.5;
-      this.radius = Math.random() * 2 + 0.5;
-      this.alpha = 1;
-      this.decay = Math.random() * 0.01 + 0.003;
-    }
-    update() {
-      if (mouse.active) {
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 180) {
-          this.vx += (dx / dist) * globalGravityModifier;
-          this.vy += (dy / dist) * globalGravityModifier;
-        }
-      }
-      this.x += this.vx;
-      this.y += this.vy;
-      this.vx *= 0.98;
-      this.vy *= 0.98;
-      this.alpha -= this.decay;
-    }
-    draw() {
-      labCtx.save();
-      labCtx.globalAlpha = this.alpha;
-      labCtx.fillStyle = this.alpha > 0.5 ? 'var(--primary-red)' : 'rgba(245,245,247,0.6)';
-      labCtx.beginPath();
-      labCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      labCtx.fill();
-      labCtx.restore();
-    }
+    // Clear and Parse Pods
+    podsOutput.innerHTML = '';
+    
+    data.pods.forEach(pod => {
+      const podEl = document.createElement('div');
+      podEl.className = 'wa-pod';
+      
+      const isMono = pod.type === 'meta';
+      podEl.innerHTML = `
+        <div class="pod-title">${pod.label}</div>
+        <div class="pod-content ${isMono ? 'mono' : ''}">${pod.text}</div>
+      `;
+      podsOutput.appendChild(podEl);
+    });
   }
 
-  function createSparksInBulk() {
-    for(let i=0; i<30; i++) {
-      labParticles.push(new LabParticle(Math.random() * labCanvas.width, Math.random() * labCanvas.height));
-    }
-  }
-  createSparksInBulk();
-
-  function getMousePos(e) {
-    const rect = labCanvas.getBoundingClientRect();
-    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-  }
-
-  labCanvas.addEventListener('mousemove', (e) => {
-    mouse.active = true;
-    const pos = getMousePos(e);
-    mouse.x = pos.x; mouse.y = pos.y;
-    if(Math.random() > 0.6) labParticles.push(new LabParticle(mouse.x, mouse.y));
-  });
-
-  labCanvas.addEventListener('mouseleave', () => mouse.active = false);
-  labCanvas.addEventListener('mousedown', (e) => {
-    const pos = getMousePos(e);
-    for(let i=0; i<15; i++) labParticles.push(new LabParticle(pos.x, pos.y));
-  });
-
-  function setSparkGravity(val) {
-    globalGravityModifier = val;
-    document.querySelectorAll('.flow-step').forEach(el => el.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-  }
-
-  function animateLab() {
-    labCtx.fillStyle = 'rgba(10, 10, 10, 0.4)';
-    labCtx.fillRect(0, 0, labCanvas.width, labCanvas.height);
-
-    if (labParticles.length < 40) {
-      labParticles.push(new LabParticle(Math.random() * labCanvas.width, labCanvas.height - 10));
-    }
-
-    labParticles = labParticles.filter(p => p.alpha > 0);
-    labParticles.forEach(p => { p.update(); p.draw(); });
-
-    requestAnimationFrame(animateLab);
-  }
-  animateLab();
+  // Trigger Data Machine
+  initEngine();
 </script>
-
 </body>
 </html>
